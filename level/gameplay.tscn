@@ -1,0 +1,184 @@
+[gd_scene load_steps=3 format=3 uid="uid://cclmwir3uy1gw"]
+
+[ext_resource type="Script" uid="uid://c25xxvn6llpyj" path="res://level/gameplay.gd" id="1_5p71y"]
+[ext_resource type="Texture2D" uid="uid://heix7b7hf8sk" path="res://images/teal.png" id="2_jcfem"]
+
+[node name="GameplayUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_5p71y")
+
+[node name="TealUIBG" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(0.309804, 0.309804, 0.0431373, 0.129412)
+position = Vector2(640, 353)
+scale = Vector2(4.2, 2.44667)
+texture = ExtResource("2_jcfem")
+
+[node name="OptionsContainer" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -129.5
+offset_top = -111.0
+offset_right = 129.5
+offset_bottom = 111.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="OptionsTitle" type="RichTextLabel" parent="OptionsContainer"]
+layout_mode = 2
+text = "Game Options"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="Back" type="Button" parent="OptionsContainer"]
+layout_mode = 2
+text = "Back to Game"
+
+[node name="Load_Save" type="Button" parent="OptionsContainer"]
+layout_mode = 2
+text = "Save/Load Progress"
+
+[node name="Options" type="Button" parent="OptionsContainer"]
+layout_mode = 2
+text = "Options"
+
+[node name="MainMenuGo" type="Button" parent="OptionsContainer"]
+layout_mode = 2
+text = "Back to Main Menu"
+
+[node name="CloseOptions" type="Button" parent="OptionsContainer"]
+layout_mode = 2
+text = "Close Options"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.951
+anchor_right = 0.5
+anchor_bottom = 0.951
+offset_left = -365.0
+offset_top = -19.72
+offset_right = 362.0
+offset_bottom = 20.28
+theme_override_constants/separation = 20
+
+[node name="Money" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Money: "
+
+[node name="Research" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "RP: "
+
+[node name="Days" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "YYYY/MM/DD: "
+
+[node name="OptionsButton" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+text = "Options"
+
+[node name="ConfirmwindowLeave" type="Window" parent="."]
+title = "Are you sure?"
+initial_position = 1
+size = Vector2i(300, 200)
+visible = false
+
+[node name="RichTextLabel" type="RichTextLabel" parent="ConfirmwindowLeave"]
+offset_right = 284.0
+offset_bottom = 115.0
+text = "Are you sure to leave?
+
+You may have some unsaved progress."
+
+[node name="ConfirmLeave" type="Button" parent="ConfirmwindowLeave"]
+anchors_preset = -1
+anchor_left = 0.807
+anchor_top = 0.647
+anchor_right = 0.807
+anchor_bottom = 0.647
+offset_left = -53.1
+offset_top = -20.4
+offset_right = 52.9
+offset_bottom = 20.6
+text = "Yes"
+
+[node name="GoBack" type="Button" parent="ConfirmwindowLeave"]
+anchors_preset = -1
+anchor_left = 0.623
+anchor_top = 0.647
+anchor_right = 0.623
+anchor_bottom = 0.647
+offset_left = -105.9
+offset_top = -20.4
+offset_right = 0.0999908
+offset_bottom = 20.6
+text = "No"
+
+[node name="GameplayComponents" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.212
+anchor_right = 0.212
+offset_left = -122.36
+offset_top = 50.0
+offset_right = 124.64
+offset_bottom = 266.0
+theme_override_constants/separation = 6
+
+[node name="CreateCPU" type="Button" parent="GameplayComponents"]
+layout_mode = 2
+text = "Create CPU"
+
+[node name="Research" type="Button" parent="GameplayComponents"]
+layout_mode = 2
+text = "Research"
+
+[node name="CheckMarket" type="Button" parent="GameplayComponents"]
+layout_mode = 2
+text = "Check Market Demands"
+
+[node name="FabPartners" type="Button" parent="GameplayComponents"]
+layout_mode = 2
+text = "Fab Partners"
+
+[node name="CompanyReport" type="Button" parent="GameplayComponents"]
+layout_mode = 2
+text = "Company Report"
+
+[node name="Close" type="Button" parent="GameplayComponents"]
+layout_mode = 2
+text = "Close Popup"
+
+[node name="Actions" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.057
+anchor_right = 0.057
+offset_left = -31.96
+offset_top = 50.0
+offset_right = 33.04
+offset_bottom = 81.0
+text = "Actions
+"
+
+[connection signal="pressed" from="OptionsContainer/MainMenuGo" to="." method="_on_main_menu_go_pressed"]
+[connection signal="pressed" from="OptionsContainer/CloseOptions" to="." method="_on_close_options_pressed"]
+[connection signal="pressed" from="HBoxContainer/OptionsButton" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="ConfirmwindowLeave/ConfirmLeave" to="." method="_on_confirm_leave_pressed"]
+[connection signal="pressed" from="ConfirmwindowLeave/GoBack" to="." method="_on_go_back_pressed"]
+[connection signal="pressed" from="GameplayComponents/Close" to="." method="_on_close_pressed"]
+[connection signal="pressed" from="Actions" to="." method="_on_actions_pressed"]

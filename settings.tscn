@@ -1,0 +1,75 @@
+[gd_scene load_steps=2 format=3 uid="uid://d2eaeoapgopgq"]
+
+[ext_resource type="Script" uid="uid://sbu8pvhj0iq5" path="res://settings.gd" id="1_x2hje"]
+
+[node name="Settings" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = 11.0
+offset_right = -1.0
+offset_bottom = 11.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_x2hje")
+
+[node name="Back" type="Button" parent="."]
+layout_mode = 0
+offset_left = 27.0
+offset_top = 15.0
+offset_right = 72.0
+offset_bottom = 46.0
+text = "Back"
+
+[node name="GeneralSettings" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.077
+anchor_right = 0.077
+offset_left = -69.56
+offset_top = 77.0
+offset_right = 70.44
+offset_bottom = 108.0
+text = "General"
+
+[node name="AboutMenuPress" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.199
+anchor_right = 0.199
+offset_left = -69.72
+offset_top = 77.0
+offset_right = 70.28
+offset_bottom = 108.0
+text = "About"
+
+[node name="AboutWindowPopup" type="Window" parent="."]
+title = "About this Game"
+initial_position = 1
+size = Vector2i(350, 200)
+
+[node name="RichTextLabel" type="RichTextLabel" parent="AboutWindowPopup"]
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.06
+anchor_right = 0.5
+anchor_bottom = 0.06
+offset_left = -174.0
+offset_right = 173.0
+offset_bottom = 187.0
+bbcode_enabled = true
+text = "[center][b]Hardware Tycoon[/b][/center]
+[center]Version Dev[/center]
+
+Inspired By Hardware Tycoon from Haxxor, and others from itch.io
+
+Author: Mizu
+License: MIT
+
+Visit the Github Organization, [url=\"https://github.com/TrinityX-Studios\"]TrinityX[/url]"
+
+[connection signal="pressed" from="Back" to="." method="_on_back_pressed"]
+[connection signal="pressed" from="AboutMenuPress" to="." method="_on_about_menu_press_pressed"]
+[connection signal="close_requested" from="AboutWindowPopup" to="." method="_on_about_window_popup_close_requested"]

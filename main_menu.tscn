@@ -1,0 +1,71 @@
+[gd_scene load_steps=2 format=3 uid="uid://7onqovbgslsj"]
+
+[ext_resource type="Script" uid="uid://cr4sj12047w46" path="res://main_menu.gd" id="1_06t4h"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1280.0
+offset_bottom = 720.0
+script = ExtResource("1_06t4h")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.188
+anchor_right = 0.188
+offset_left = -84.64
+offset_top = 249.0
+offset_right = 85.36
+offset_bottom = 412.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 13
+
+[node name="Play" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Play"
+
+[node name="LoadGame" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Load Game"
+
+[node name="Settings" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Settings"
+
+[node name="Quit" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Quit"
+
+[node name="LABELTITLE" type="RichTextLabel" parent="."]
+layout_mode = 2
+anchor_left = 0.114
+anchor_right = 0.114
+offset_left = -4.92001
+offset_top = 64.0
+offset_right = 522.08
+offset_bottom = 228.0
+bbcode_enabled = true
+text = "[b][font_size=38]Hardware 
+Tycoon[/font_size][/b]
+
+A TrinityX Project"
+
+[node name="MOTD" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.424
+anchor_right = 0.424
+offset_left = -197.72
+offset_top = 44.0
+offset_right = 75.28
+offset_bottom = 130.0
+bbcode_enabled = true
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
