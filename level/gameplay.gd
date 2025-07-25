@@ -7,6 +7,7 @@ extends Control
 @onready var tealUIBG = $TealUIBG
 @onready var confirmLeave = $ConfirmwindowLeave
 @onready var gameplaycomp = $GameplayComponents
+@onready var newCPU_UI = $CreateCPUCoreUI
 
 func _on_button_pressed() -> void:
 	print("Showing up the Menu")
@@ -81,3 +82,26 @@ func _on_close_pressed() -> void:
 		gameplaycomp.hide()
 	else:
 		print("Wait, how did you do that?")
+
+func checkifCPU_CORE_UI_can_be_summoned() -> bool:
+	if newCPU_UI.visible == true:
+		return false
+	else:
+		return true
+
+func _on_create_cpu_pressed() -> void:
+	# When creating a new cpu
+	# Actions > CreateCPU
+	if checkifCPU_CORE_UI_can_be_summoned() == true:
+		newCPU_UI.show()
+		gameplaycomp.hide() # Hide the selection
+	else:
+		print("It's already showing...")
+
+
+func _on_close_cpu_creation_pressed() -> void:
+	# on CPU creation
+	if checkifCPU_CORE_UI_can_be_summoned() == false:
+		newCPU_UI.hide()
+	else:
+		print("It's already hidden")

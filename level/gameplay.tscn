@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://cclmwir3uy1gw"]
+[gd_scene load_steps=4 format=3 uid="uid://cclmwir3uy1gw"]
 
 [ext_resource type="Script" uid="uid://c25xxvn6llpyj" path="res://level/gameplay.gd" id="1_5p71y"]
 [ext_resource type="Texture2D" uid="uid://heix7b7hf8sk" path="res://images/teal.png" id="2_jcfem"]
+[ext_resource type="Theme" uid="uid://b2cw6p6e6sgsj" path="res://ui/default_theme.tres" id="3_jcfem"]
 
 [node name="GameplayUI" type="Control"]
 layout_mode = 3
@@ -168,17 +169,56 @@ layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.057
 anchor_right = 0.057
-offset_left = -31.96
-offset_top = 50.0
-offset_right = 33.04
-offset_bottom = 81.0
+offset_left = -33.96
+offset_top = 20.0
+offset_right = 31.04
+offset_bottom = 51.0
 text = "Actions
 "
+
+[node name="CreateCPUCoreUI" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.425
+anchor_right = 0.5
+offset_left = -219.0
+offset_top = 62.0
+offset_right = 183.0
+offset_bottom = 411.0
+
+[node name="CreateCPUVB" type="VBoxContainer" parent="CreateCPUCoreUI"]
+clip_children = 2
+layout_mode = 2
+theme = ExtResource("3_jcfem")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CreateCPUCoreUI/CreateCPUVB"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="CreateCPUTitle" type="RichTextLabel" parent="CreateCPUCoreUI/CreateCPUVB/HBoxContainer"]
+layout_mode = 2
+text = "Create CPU"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VSeparator" type="VSeparator" parent="CreateCPUCoreUI/CreateCPUVB/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 350
+
+[node name="CloseCPUCreation" type="Button" parent="CreateCPUCoreUI/CreateCPUVB/HBoxContainer"]
+layout_mode = 2
+text = "Close"
 
 [connection signal="pressed" from="OptionsContainer/MainMenuGo" to="." method="_on_main_menu_go_pressed"]
 [connection signal="pressed" from="OptionsContainer/CloseOptions" to="." method="_on_close_options_pressed"]
 [connection signal="pressed" from="HBoxContainer/OptionsButton" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="ConfirmwindowLeave/ConfirmLeave" to="." method="_on_confirm_leave_pressed"]
 [connection signal="pressed" from="ConfirmwindowLeave/GoBack" to="." method="_on_go_back_pressed"]
+[connection signal="pressed" from="GameplayComponents/CreateCPU" to="." method="_on_create_cpu_pressed"]
 [connection signal="pressed" from="GameplayComponents/Close" to="." method="_on_close_pressed"]
 [connection signal="pressed" from="Actions" to="." method="_on_actions_pressed"]
+[connection signal="pressed" from="CreateCPUCoreUI/CreateCPUVB/HBoxContainer/CloseCPUCreation" to="." method="_on_close_cpu_creation_pressed"]

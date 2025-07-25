@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://7onqovbgslsj"]
+[gd_scene load_steps=5 format=3 uid="uid://7onqovbgslsj"]
 
 [ext_resource type="Script" uid="uid://cr4sj12047w46" path="res://main_menu.gd" id="1_06t4h"]
+[ext_resource type="Theme" uid="uid://cnjtetudthuan" path="res://addons/windows_95_theme/save1.tres" id="2_fu7sn"]
+[ext_resource type="Theme" uid="uid://b2cw6p6e6sgsj" path="res://ui/default_theme.tres" id="3_jix8l"]
+[ext_resource type="FontFile" uid="uid://80f5vdk0lhte" path="res://addons/windows_95_theme/MS Sans Serif.ttf" id="4_jix8l"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -23,10 +26,12 @@ grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+theme = ExtResource("2_fu7sn")
 theme_override_constants/separation = 13
 
 [node name="Play" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme = ExtResource("3_jix8l")
 text = "Play"
 
 [node name="LoadGame" type="Button" parent="MarginContainer/VBoxContainer"]
@@ -49,6 +54,7 @@ offset_left = -4.92001
 offset_top = 64.0
 offset_right = 522.08
 offset_bottom = 228.0
+theme = ExtResource("3_jix8l")
 bbcode_enabled = true
 text = "[b][font_size=38]Hardware 
 Tycoon[/font_size][/b]
@@ -64,6 +70,7 @@ offset_left = -197.72
 offset_top = 44.0
 offset_right = 75.28
 offset_bottom = 130.0
+theme_override_fonts/normal_font = ExtResource("4_jix8l")
 bbcode_enabled = true
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Play" to="." method="_on_play_pressed"]

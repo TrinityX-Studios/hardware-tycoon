@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://d2eaeoapgopgq"]
+[gd_scene load_steps=3 format=3 uid="uid://d2eaeoapgopgq"]
 
 [ext_resource type="Script" uid="uid://sbu8pvhj0iq5" path="res://settings.gd" id="1_x2hje"]
+[ext_resource type="Theme" uid="uid://cnjtetudthuan" path="res://addons/windows_95_theme/save1.tres" id="2_nkug2"]
 
 [node name="Settings" type="Control"]
 layout_mode = 3
@@ -49,6 +50,7 @@ text = "About"
 title = "About this Game"
 initial_position = 1
 size = Vector2i(350, 200)
+theme = ExtResource("2_nkug2")
 
 [node name="RichTextLabel" type="RichTextLabel" parent="AboutWindowPopup"]
 anchors_preset = -1
