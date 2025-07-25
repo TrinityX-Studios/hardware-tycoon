@@ -22,16 +22,15 @@ texture = ExtResource("2_jcfem")
 
 [node name="OptionsContainer" type="VBoxContainer" parent="."]
 visible = false
+z_index = 5
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -129.5
-offset_top = -111.0
-offset_right = 129.5
-offset_bottom = 111.0
+anchors_preset = -1
+anchor_left = 0.426
+anchor_right = 0.426
+offset_left = -129.87
+offset_top = 81.0
+offset_right = 129.13
+offset_bottom = 303.0
 grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
@@ -178,14 +177,15 @@ text = "Actions
 
 [node name="CreateCPUCoreUI" type="PanelContainer" parent="."]
 visible = false
+z_index = 10
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.425
 anchor_right = 0.5
 offset_left = -219.0
-offset_top = 62.0
-offset_right = 183.0
-offset_bottom = 411.0
+offset_top = 14.0
+offset_right = 207.75
+offset_bottom = 363.0
 
 [node name="CreateCPUVB" type="VBoxContainer" parent="CreateCPUCoreUI"]
 clip_children = 2
@@ -212,6 +212,58 @@ theme_override_constants/separation = 350
 [node name="CloseCPUCreation" type="Button" parent="CreateCPUCoreUI/CreateCPUVB/HBoxContainer"]
 layout_mode = 2
 text = "Close"
+
+[node name="GridContainer" type="GridContainer" parent="CreateCPUCoreUI/CreateCPUVB"]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+columns = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CreateCPUCoreUI/CreateCPUVB/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 15
+size_flags_vertical = 3
+theme_override_constants/separation = 5
+
+[node name="NameCPU_Label" type="RichTextLabel" parent="CreateCPUCoreUI/CreateCPUVB/GridContainer/VBoxContainer"]
+layout_mode = 2
+text = "Brand Name"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+
+[node name="NameCPU_Holder" type="RichTextLabel" parent="CreateCPUCoreUI/CreateCPUVB/GridContainer/VBoxContainer"]
+layout_mode = 2
+fit_content = true
+autowrap_mode = 0
+
+[node name="CPUChangeName_Btn" type="Button" parent="CreateCPUCoreUI/CreateCPUVB/GridContainer/VBoxContainer"]
+layout_mode = 2
+text = "Change Brand Name"
+
+[node name="SeriesLabel" type="RichTextLabel" parent="CreateCPUCoreUI/CreateCPUVB/GridContainer/VBoxContainer"]
+layout_mode = 2
+text = "Chip Series Name"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+
+[node name="SeriesLabel_Holder" type="RichTextLabel" parent="CreateCPUCoreUI/CreateCPUVB/GridContainer/VBoxContainer"]
+layout_mode = 2
+fit_content = true
+autowrap_mode = 0
+
+[node name="SeriesChangeName_Btn2" type="Button" parent="CreateCPUCoreUI/CreateCPUVB/GridContainer/VBoxContainer"]
+layout_mode = 2
+text = "Change Brand Name"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="CreateCPUCoreUI/CreateCPUVB/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Window" type="Window" parent="."]
+initial_position = 1
+unresizable = true
+force_native = true
 
 [connection signal="pressed" from="OptionsContainer/MainMenuGo" to="." method="_on_main_menu_go_pressed"]
 [connection signal="pressed" from="OptionsContainer/CloseOptions" to="." method="_on_close_options_pressed"]
