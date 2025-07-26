@@ -172,3 +172,5 @@ func _on_name_series_cpu_close_requested() -> void:
 	if NameSeriesCPUDialog.visible == true:
 		productUserEntryBox_Series.clear()
 		NameSeriesCPUDialog.hide()
+
+# Features that will be considered "coming soon"

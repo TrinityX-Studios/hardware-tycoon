@@ -131,12 +131,12 @@ text = "No"
 visible = false
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.212
-anchor_right = 0.212
-offset_left = -122.36
-offset_top = 50.0
-offset_right = 124.64
-offset_bottom = 266.0
+anchor_left = 0.224
+anchor_right = 0.224
+offset_left = -123.76
+offset_top = 39.0
+offset_right = 123.24
+offset_bottom = 255.0
 theme_override_constants/separation = 6
 
 [node name="CreateCPU" type="Button" parent="GameplayComponents"]
@@ -176,6 +176,7 @@ text = "Actions
 "
 
 [node name="CreateCPUCoreUI" type="PanelContainer" parent="."]
+visible = false
 z_index = 10
 layout_mode = 1
 anchors_preset = -1
@@ -264,6 +265,7 @@ title = "Name the Product"
 initial_position = 1
 size = Vector2i(280, 180)
 visible = false
+exclusive = true
 unresizable = true
 always_on_top = true
 popup_window = true
@@ -317,6 +319,7 @@ title = "Name the Product"
 initial_position = 1
 size = Vector2i(280, 180)
 visible = false
+exclusive = true
 unresizable = true
 always_on_top = true
 popup_window = true
@@ -363,6 +366,31 @@ offset_top = 56.0
 offset_right = 275.0
 offset_bottom = 89.0
 text = "OK"
+
+[node name="Accountancy" type="Window" parent="."]
+title = "Financial Reports of your Company"
+initial_position = 1
+size = Vector2i(450, 300)
+exclusive = true
+unresizable = true
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Accountancy"]
+offset_right = 346.0
+offset_bottom = 40.0
+text = "Here are the Reports"
+
+[node name="TabBar" type="TabBar" parent="Accountancy"]
+offset_left = 2.0
+offset_top = 20.0
+offset_right = 449.0
+offset_bottom = 51.0
+current_tab = 0
+tab_alignment = 1
+select_with_rmb = true
+tab_count = 3
+tab_0/title = "Yearly Earnings"
+tab_1/title = "Expenditures"
+tab_2/title = "Loans"
 
 [connection signal="pressed" from="OptionsContainer/MainMenuGo" to="." method="_on_main_menu_go_pressed"]
 [connection signal="pressed" from="OptionsContainer/CloseOptions" to="." method="_on_close_options_pressed"]
