@@ -5,8 +5,8 @@
 [ext_resource type="Theme" uid="uid://b2cw6p6e6sgsj" path="res://ui/default_theme.tres" id="3_jcfem"]
 [ext_resource type="Texture2D" uid="uid://w34yp0emtfca" path="res://images/pause-svgrepo-com.png" id="4_gshik"]
 [ext_resource type="Texture2D" uid="uid://do7rcti1ew4p2" path="res://images/play-svgrepo-com.png" id="5_ogtqb"]
-[ext_resource type="Texture2D" uid="uid://d3xswhf44i76o" path="res://images/fast-forward-svgrepo-com.svg" id="6_gd56x"]
-[ext_resource type="Texture2D" uid="uid://48iom6lb6yip" path="res://images/fast-forward-x3-svgrepo-com.svg" id="7_ww1hb"]
+[ext_resource type="Texture2D" uid="uid://ctuqyk4mwkj34" path="res://images/fast-forward-svgrepo-com.png" id="6_gshik"]
+[ext_resource type="Texture2D" uid="uid://dljfshkoegwd" path="res://images/fast-forward-x3-svgrepo-com.png" id="7_ogtqb"]
 
 [node name="GameplayUI" type="Control"]
 layout_mode = 3
@@ -417,6 +417,7 @@ tab_1/title = "Expenditures"
 tab_2/title = "Loans"
 
 [node name="Panel" type="Panel" parent="Accountancy/TabBar"]
+layout_mode = 0
 offset_left = -2.0
 offset_top = 32.0
 offset_right = 449.0
@@ -473,7 +474,6 @@ alignment = 1
 
 [node name="Pause" type="Button" parent="DateTimePopup"]
 layout_mode = 2
-theme_type_variation = &"FlatButton"
 text = "          "
 icon = ExtResource("4_gshik")
 icon_alignment = 1
@@ -498,7 +498,7 @@ size_flags_horizontal = 3
 [node name="FFx1" type="Button" parent="DateTimePopup"]
 layout_mode = 2
 text = "          "
-icon = ExtResource("6_gd56x")
+icon = ExtResource("6_gshik")
 flat = true
 icon_alignment = 1
 expand_icon = true
@@ -510,7 +510,7 @@ size_flags_horizontal = 3
 [node name="FFx2" type="Button" parent="DateTimePopup"]
 layout_mode = 2
 text = "         "
-icon = ExtResource("7_ww1hb")
+icon = ExtResource("7_ogtqb")
 flat = true
 icon_alignment = 1
 expand_icon = true
@@ -519,6 +519,7 @@ expand_icon = true
 [connection signal="pressed" from="OptionsContainer/CloseOptions" to="." method="_on_close_options_pressed"]
 [connection signal="pressed" from="HBoxContainer/Money" to="." method="_on_money_pressed"]
 [connection signal="pressed" from="HBoxContainer/Research" to="." method="_on_research_pressed"]
+[connection signal="pressed" from="HBoxContainer/Days" to="." method="_on_days_pressed"]
 [connection signal="pressed" from="HBoxContainer/OptionsButton" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="ConfirmwindowLeave/ConfirmLeave" to="." method="_on_confirm_leave_pressed"]
 [connection signal="pressed" from="ConfirmwindowLeave/GoBack" to="." method="_on_go_back_pressed"]
@@ -536,3 +537,7 @@ expand_icon = true
 [connection signal="pressed" from="NameSeriesCPU/Cancel_prod_name_S" to="." method="_on_cancel_prod_name_s_pressed"]
 [connection signal="close_requested" from="Accountancy" to="." method="_on_accountancy_close_requested"]
 [connection signal="close_requested" from="ResearchWindow" to="." method="_on_research_window_close_requested"]
+[connection signal="pressed" from="DateTimePopup/Pause" to="." method="_on_pause_pressed"]
+[connection signal="pressed" from="DateTimePopup/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="DateTimePopup/FFx1" to="." method="_on_f_fx_1_pressed"]
+[connection signal="pressed" from="DateTimePopup/FFx2" to="." method="_on_f_fx_2_pressed"]

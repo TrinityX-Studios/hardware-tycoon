@@ -14,6 +14,7 @@ extends Control
 @onready var NameSeriesCPUDialog = $NameSeriesCPU
 @onready var accountancy_window = $Accountancy
 @onready var research_window = $ResearchWindow
+@onready var dateTime_popup = $DateTimePopup
 
 
 
@@ -212,4 +213,39 @@ func _on_research_pressed() -> void:
 		research_window.move_to_center()
 	else:
 		research_window.hide()
+
+func _on_days_pressed() -> void:
+	if dateTime_popup.visible == false:
+		dateTime_popup.show()
+	else:
+		dateTime_popup.hide()
+
+
+func _on_pause_pressed() -> void:
+	if $DateTimePopup/Pause.flat == false:
+		$DateTimePopup/Pause.flat = true
+		# Logic timer here
+	else:
+		$DateTimePopup/Pause.flat = false
+		# Also logic time here
 		
+func _on_play_pressed() -> void:
+	if $DateTimePopup/Play.flat == false:
+		$DateTimePopup/Play.flat = true
+	else:
+		$DateTimePopup/Play.flat = false
+
+func _on_f_fx_1_pressed() -> void:
+	if $DateTimePopup/FFx1.flat == false:
+		$DateTimePopup/FFx1.flat = true
+	else:
+		$DateTimePopup/FFx1.flat = false
+
+func _on_f_fx_2_pressed() -> void:
+	if $DateTimePopup/FFx2.flat == false:
+		$DateTimePopup/FFx2.flat = true
+	else:
+		$DateTimePopup/FFx2.flat = false
+		
+# Checks if rest of datetime elements have been "flatted or not" since it will 
+# be used as an indicator for what the game's time speed...
