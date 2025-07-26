@@ -17,6 +17,11 @@ run/main_scene="uid://7onqovbgslsj"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[debug]
+
+settings/stdout/print_fps=true
+settings/stdout/print_gpu_profile=true
+
 [display]
 
 window/size/viewport_width=950
@@ -24,6 +29,29 @@ window/size/viewport_height=480
 window/size/resizable=false
 window/subwindows/embed_subwindows=false
 window/stretch/aspect="ignore"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/_Godot-IDE_/plugin.cfg", "res://addons/ai_assistant_hub/plugin.cfg", "res://addons/math_extensions/plugin.cfg", "res://addons/theme_gen_save_sync/plugin.cfg")
+
+[file_customization]
+
+folder_colors={
+"res://addons/_Godot-IDE_/plugins": "blue",
+"res://addons/_Godot-IDE_/plugins/": "blue",
+"res://addons/_Godot-IDE_/shared_resources/": "teal"
+}
+
+[memory]
+
+limits/message_queue/max_size_mb=64
+
+[plugins]
+
+ai_assistant_hub/base_url="http://127.0.0.1:11434"
+ai_assistant_hub/llm_api="ollama_api"
+ai_assistant_hub/preferences/thinking_target=0
+ai_assistant_hub/preferences/always_scroll_to_bottom=false
 
 [rendering]
 

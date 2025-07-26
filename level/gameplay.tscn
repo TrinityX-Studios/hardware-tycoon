@@ -268,7 +268,7 @@ unresizable = true
 always_on_top = true
 popup_window = true
 
-[node name="RichTextLabel" type="RichTextLabel" parent="NameBrandCPU"]
+[node name="WINLABEL_NEWCPU" type="RichTextLabel" parent="NameBrandCPU"]
 offset_top = 1.0
 offset_right = 279.0
 offset_bottom = 32.0

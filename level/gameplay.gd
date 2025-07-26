@@ -11,6 +11,7 @@ extends Control
 @onready var productUserEntryBox = $NameBrandCPU/ProductUserEntry
 @onready var NameBrandCPUDialog = $NameBrandCPU
 
+
 func _ready() -> void:
 	if productUserEntryBox != null:
 		print("DEBUG: Type of TextBox: ", productUserEntryBox.get_class())
