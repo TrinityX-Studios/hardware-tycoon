@@ -422,6 +422,7 @@ offset_bottom = 274.0
 title = "Research Technology"
 initial_position = 1
 size = Vector2i(650, 345)
+visible = false
 unresizable = true
 always_on_top = true
 
@@ -456,6 +457,7 @@ offset_bottom = 346.0
 [connection signal="pressed" from="OptionsContainer/MainMenuGo" to="." method="_on_main_menu_go_pressed"]
 [connection signal="pressed" from="OptionsContainer/CloseOptions" to="." method="_on_close_options_pressed"]
 [connection signal="pressed" from="HBoxContainer/Money" to="." method="_on_money_pressed"]
+[connection signal="pressed" from="HBoxContainer/Research" to="." method="_on_research_pressed"]
 [connection signal="pressed" from="HBoxContainer/OptionsButton" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="ConfirmwindowLeave/ConfirmLeave" to="." method="_on_confirm_leave_pressed"]
 [connection signal="pressed" from="ConfirmwindowLeave/GoBack" to="." method="_on_go_back_pressed"]
@@ -472,3 +474,4 @@ offset_bottom = 346.0
 [connection signal="pressed" from="NameSeriesCPU/clear_textbox_S" to="." method="_on_clear_textbox_s_pressed"]
 [connection signal="pressed" from="NameSeriesCPU/Cancel_prod_name_S" to="." method="_on_cancel_prod_name_s_pressed"]
 [connection signal="close_requested" from="Accountancy" to="." method="_on_accountancy_close_requested"]
+[connection signal="close_requested" from="ResearchWindow" to="." method="_on_research_window_close_requested"]

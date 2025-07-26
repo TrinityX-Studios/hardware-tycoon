@@ -13,6 +13,7 @@ extends Control
 @onready var productUserEntryBox_Series = $NameSeriesCPU/ProductUserEntry_S
 @onready var NameSeriesCPUDialog = $NameSeriesCPU
 @onready var accountancy_window = $Accountancy
+@onready var research_window = $ResearchWindow
 
 
 
@@ -198,3 +199,17 @@ func _on_money_pressed() -> void:
 
 func _on_accountancy_close_requested() -> void:
 	accountancy_window.hide()
+
+
+func _on_research_window_close_requested() -> void:
+	research_window.hide()
+
+
+func _on_research_pressed() -> void:
+	if research_window.visible == false:
+		research_window.show()
+		research_window.grab_focus()
+		research_window.move_to_center()
+	else:
+		research_window.hide()
+		
