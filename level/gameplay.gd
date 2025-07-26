@@ -15,6 +15,8 @@ extends Control
 @onready var accountancy_window = $Accountancy
 
 
+
+
 func _ready() -> void:
 	if productUserEntryBox_Brand != null:
 		print("DEBUG: Type of TextBox: ", productUserEntryBox_Brand.get_class())
@@ -25,6 +27,11 @@ func _on_button_pressed() -> void:
 	print("Showing up the Menu")
 	#get_tree().change_scene_to_file("res://main_menu.tscn")
 	optionsMenu_Window()
+#	Set all buttons to not work
+	$Actions.disabled = true
+	$HBoxContainer/Money.disabled = true
+	$HBoxContainer/Research.disabled = true
+	$HBoxContainer/Days.disabled = true
 	
 
 func tealUICall() -> void:
@@ -38,6 +45,10 @@ func optionsMenu_Window() -> void:
 	if optionsContainer.visible == true:
 		tealUICall()
 		optionsContainer.hide()
+		$Actions.disabled = false
+		$HBoxContainer/Money.disabled = false
+		$HBoxContainer/Research.disabled = false
+		$HBoxContainer/Days.disabled = false
 	else:
 		tealUICall()
 		optionsContainer.show()

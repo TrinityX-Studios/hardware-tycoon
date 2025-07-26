@@ -16,6 +16,8 @@ script = ExtResource("1_5p71y")
 [node name="TealUIBG" type="Sprite2D" parent="."]
 visible = false
 modulate = Color(0.309804, 0.309804, 0.0431373, 0.129412)
+show_behind_parent = true
+z_index = 2
 position = Vector2(640, 353)
 scale = Vector2(4.2, 2.44667)
 texture = ExtResource("2_jcfem")
