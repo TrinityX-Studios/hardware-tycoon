@@ -460,6 +460,7 @@ offset_right = 651.0
 offset_bottom = 346.0
 
 [node name="DateTimePopup" type="HBoxContainer" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.594
