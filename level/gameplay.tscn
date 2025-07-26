@@ -1,8 +1,12 @@
-[gd_scene load_steps=4 format=3 uid="uid://cclmwir3uy1gw"]
+[gd_scene load_steps=8 format=3 uid="uid://cclmwir3uy1gw"]
 
 [ext_resource type="Script" uid="uid://c25xxvn6llpyj" path="res://level/gameplay.gd" id="1_5p71y"]
 [ext_resource type="Texture2D" uid="uid://heix7b7hf8sk" path="res://images/teal.png" id="2_jcfem"]
 [ext_resource type="Theme" uid="uid://b2cw6p6e6sgsj" path="res://ui/default_theme.tres" id="3_jcfem"]
+[ext_resource type="Texture2D" uid="uid://cbb33lf17klnf" path="res://images/pause-svgrepo-com.svg" id="4_gshik"]
+[ext_resource type="Texture2D" uid="uid://bp1sb8ypgfyc5" path="res://images/play-svgrepo-com.svg" id="5_ogtqb"]
+[ext_resource type="Texture2D" uid="uid://d3xswhf44i76o" path="res://images/fast-forward-svgrepo-com.svg" id="6_gd56x"]
+[ext_resource type="Texture2D" uid="uid://48iom6lb6yip" path="res://images/fast-forward-x3-svgrepo-com.svg" id="7_ww1hb"]
 
 [node name="GameplayUI" type="Control"]
 layout_mode = 3
@@ -453,6 +457,63 @@ offset_left = 4.0
 offset_top = 60.0
 offset_right = 651.0
 offset_bottom = 346.0
+
+[node name="DateTimePopup" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.594
+anchor_top = 0.858
+anchor_right = 0.594
+anchor_bottom = 0.858
+offset_left = -131.3
+offset_top = -21.84
+offset_right = 131.7
+offset_bottom = 22.16
+alignment = 1
+
+[node name="Pause" type="Button" parent="DateTimePopup"]
+layout_mode = 2
+theme_type_variation = &"FlatButton"
+text = "          "
+icon = ExtResource("4_gshik")
+icon_alignment = 1
+expand_icon = true
+
+[node name="VSeparator" type="VSeparator" parent="DateTimePopup"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Play" type="Button" parent="DateTimePopup"]
+layout_mode = 2
+text = "         "
+icon = ExtResource("5_ogtqb")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="VSeparator2" type="VSeparator" parent="DateTimePopup"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FFx1" type="Button" parent="DateTimePopup"]
+layout_mode = 2
+text = "          "
+icon = ExtResource("6_gd56x")
+flat = true
+icon_alignment = 1
+expand_icon = true
+
+[node name="VSeparator3" type="VSeparator" parent="DateTimePopup"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FFx2" type="Button" parent="DateTimePopup"]
+layout_mode = 2
+text = "         "
+icon = ExtResource("7_ww1hb")
+flat = true
+icon_alignment = 1
+expand_icon = true
 
 [connection signal="pressed" from="OptionsContainer/MainMenuGo" to="." method="_on_main_menu_go_pressed"]
 [connection signal="pressed" from="OptionsContainer/CloseOptions" to="." method="_on_close_options_pressed"]
