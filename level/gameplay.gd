@@ -16,7 +16,14 @@ extends Control
 @onready var research_window = $ResearchWindow
 @onready var dateTime_popup = $DateTimePopup
 
+# Time Controls
+@onready var pauseBtn = $DateTimePopup/Pause
+@onready var playBtn = $DateTimePopup/Play
+@onready var ffx_one_Btn = $DateTimePopup/FFx1
+@onready var ffx_two_Btn = $DateTimePopup/FFx2
 
+# Array for time controls
+var TimeControl_BTN: Array[Button] = []
 
 
 func _ready() -> void:
@@ -24,6 +31,33 @@ func _ready() -> void:
 		print("DEBUG: Type of TextBox: ", productUserEntryBox_Brand.get_class())
 		productUserEntryBox_Brand.max_length = 15
 		print("Sucessfully limit entry to 15")
+	if productUserEntryBox_Series != null:
+		productUserEntryBox_Series.max_length = 15
+		print("Sucessfully limit entry to 15 characters")
+	# Timecontrols
+	TimeControl_BTN.append(playBtn)
+	TimeControl_BTN.append(pauseBtn)
+	TimeControl_BTN.append(ffx_one_Btn)
+	TimeControl_BTN.append(ffx_two_Btn)
+	# Connect
+	playBtn.pressed.connect(func(): set_active_time_btn(playBtn))
+	pauseBtn.pressed.connect(func(): set_active_time_btn(pauseBtn))
+	ffx_one_Btn.pressed.connect(func(): set_active_time_btn(ffx_one_Btn))
+	ffx_two_Btn.pressed.connect(func(): set_active_time_btn(ffx_two_Btn))
+	
+	# Initial Activation
+	set_active_time_btn(pauseBtn)
+	
+# Central code to manage flat states
+func set_active_time_btn(activated_button: Button) -> void:
+	for button in TimeControl_BTN:
+		if button == activated_button:
+			button.flat = false
+			print("Time mode (enabled): ", button.name)
+			# Timelogic here
+		else:
+			button.flat = true
+			print("Time mode (disabled): ", button.name)
 
 func _on_button_pressed() -> void:
 	print("Showing up the Menu")
@@ -219,33 +253,3 @@ func _on_days_pressed() -> void:
 		dateTime_popup.show()
 	else:
 		dateTime_popup.hide()
-
-
-func _on_pause_pressed() -> void:
-	if $DateTimePopup/Pause.flat == false:
-		$DateTimePopup/Pause.flat = true
-		# Logic timer here
-	else:
-		$DateTimePopup/Pause.flat = false
-		# Also logic time here
-		
-func _on_play_pressed() -> void:
-	if $DateTimePopup/Play.flat == false:
-		$DateTimePopup/Play.flat = true
-	else:
-		$DateTimePopup/Play.flat = false
-
-func _on_f_fx_1_pressed() -> void:
-	if $DateTimePopup/FFx1.flat == false:
-		$DateTimePopup/FFx1.flat = true
-	else:
-		$DateTimePopup/FFx1.flat = false
-
-func _on_f_fx_2_pressed() -> void:
-	if $DateTimePopup/FFx2.flat == false:
-		$DateTimePopup/FFx2.flat = true
-	else:
-		$DateTimePopup/FFx2.flat = false
-		
-# Checks if rest of datetime elements have been "flatted or not" since it will 
-# be used as an indicator for what the game's time speed...

@@ -537,7 +537,3 @@ expand_icon = true
 [connection signal="pressed" from="NameSeriesCPU/Cancel_prod_name_S" to="." method="_on_cancel_prod_name_s_pressed"]
 [connection signal="close_requested" from="Accountancy" to="." method="_on_accountancy_close_requested"]
 [connection signal="close_requested" from="ResearchWindow" to="." method="_on_research_window_close_requested"]
-[connection signal="pressed" from="DateTimePopup/Pause" to="." method="_on_pause_pressed"]
-[connection signal="pressed" from="DateTimePopup/Play" to="." method="_on_play_pressed"]
-[connection signal="pressed" from="DateTimePopup/FFx1" to="." method="_on_f_fx_1_pressed"]
-[connection signal="pressed" from="DateTimePopup/FFx2" to="." method="_on_f_fx_2_pressed"]
