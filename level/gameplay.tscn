@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://c25xxvn6llpyj" path="res://level/gameplay.gd" id="1_5p71y"]
 [ext_resource type="Texture2D" uid="uid://heix7b7hf8sk" path="res://images/teal.png" id="2_jcfem"]
 [ext_resource type="Theme" uid="uid://b2cw6p6e6sgsj" path="res://ui/default_theme.tres" id="3_jcfem"]
-[ext_resource type="Texture2D" uid="uid://cbb33lf17klnf" path="res://images/pause-svgrepo-com.svg" id="4_gshik"]
-[ext_resource type="Texture2D" uid="uid://bp1sb8ypgfyc5" path="res://images/play-svgrepo-com.svg" id="5_ogtqb"]
+[ext_resource type="Texture2D" uid="uid://w34yp0emtfca" path="res://images/pause-svgrepo-com.png" id="4_gshik"]
+[ext_resource type="Texture2D" uid="uid://do7rcti1ew4p2" path="res://images/play-svgrepo-com.png" id="5_ogtqb"]
 [ext_resource type="Texture2D" uid="uid://d3xswhf44i76o" path="res://images/fast-forward-svgrepo-com.svg" id="6_gd56x"]
 [ext_resource type="Texture2D" uid="uid://48iom6lb6yip" path="res://images/fast-forward-x3-svgrepo-com.svg" id="7_ww1hb"]
 
