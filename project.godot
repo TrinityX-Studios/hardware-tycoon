@@ -11,6 +11,9 @@ config_version=5
 [application]
 
 config/name="Hardware Tycoon"
+config/name_localized={
+"fil_PH": "Kagamitang Komputer na Tycoon"
+}
 config/description="A tycoon game, by making CPU and compete in the world market"
 config/version="Dev"
 run/main_scene="uid://7onqovbgslsj"
@@ -45,6 +48,10 @@ folder_colors={
 [memory]
 
 limits/message_queue/max_size_mb=64
+
+[physics]
+
+2d/run_on_separate_thread=true
 
 [plugins]
 

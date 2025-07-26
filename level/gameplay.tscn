@@ -25,12 +25,12 @@ visible = false
 z_index = 5
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.426
-anchor_right = 0.426
-offset_left = -129.87
-offset_top = 81.0
-offset_right = 129.13
-offset_bottom = 303.0
+anchor_left = 0.475
+anchor_right = 0.475
+offset_left = -129.25
+offset_top = 74.0
+offset_right = 129.75
+offset_bottom = 296.0
 grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
@@ -78,13 +78,25 @@ theme_override_constants/separation = 20
 layout_mode = 2
 text = "Money: "
 
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="Research" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 text = "RP: "
 
+[node name="VSeparator2" type="VSeparator" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="Days" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 text = "YYYY/MM/DD: "
+
+[node name="VSeparator3" type="VSeparator" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="OptionsButton" type="Button" parent="HBoxContainer"]
 layout_mode = 2
@@ -371,6 +383,7 @@ text = "OK"
 title = "Financial Reports of your Company"
 initial_position = 1
 size = Vector2i(450, 300)
+visible = false
 exclusive = true
 unresizable = true
 
@@ -404,6 +417,7 @@ offset_bottom = 274.0
 
 [connection signal="pressed" from="OptionsContainer/MainMenuGo" to="." method="_on_main_menu_go_pressed"]
 [connection signal="pressed" from="OptionsContainer/CloseOptions" to="." method="_on_close_options_pressed"]
+[connection signal="pressed" from="HBoxContainer/Money" to="." method="_on_money_pressed"]
 [connection signal="pressed" from="HBoxContainer/OptionsButton" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="ConfirmwindowLeave/ConfirmLeave" to="." method="_on_confirm_leave_pressed"]
 [connection signal="pressed" from="ConfirmwindowLeave/GoBack" to="." method="_on_go_back_pressed"]

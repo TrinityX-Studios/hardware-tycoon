@@ -12,6 +12,7 @@ extends Control
 @onready var NameBrandCPUDialog = $NameBrandCPU
 @onready var productUserEntryBox_Series = $NameSeriesCPU/ProductUserEntry_S
 @onready var NameSeriesCPUDialog = $NameSeriesCPU
+@onready var accountancy_window = $Accountancy
 
 
 func _ready() -> void:
@@ -172,5 +173,13 @@ func _on_name_series_cpu_close_requested() -> void:
 	if NameSeriesCPUDialog.visible == true:
 		productUserEntryBox_Series.clear()
 		NameSeriesCPUDialog.hide()
+		
 
-# Features that will be considered "coming soon"
+
+func _on_money_pressed() -> void:
+	if accountancy_window.visible == false:
+		accountancy_window.show()
+		accountancy_window.move_to_center()
+		accountancy_window.grab_focus()
+	else:
+		accountancy_window.hide()
