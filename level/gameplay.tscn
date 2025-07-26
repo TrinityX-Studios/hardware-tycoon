@@ -176,7 +176,6 @@ text = "Actions
 "
 
 [node name="CreateCPUCoreUI" type="PanelContainer" parent="."]
-visible = false
 z_index = 10
 layout_mode = 1
 anchors_preset = -1
@@ -260,10 +259,57 @@ text = "Change Brand Name"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Window" type="Window" parent="."]
+[node name="NameBrandCPU" type="Window" parent="."]
+title = "Name the Product"
 initial_position = 1
+size = Vector2i(280, 180)
+visible = false
 unresizable = true
-force_native = true
+always_on_top = true
+popup_window = true
+
+[node name="RichTextLabel" type="RichTextLabel" parent="NameBrandCPU"]
+offset_top = 1.0
+offset_right = 279.0
+offset_bottom = 32.0
+text = "Name the Product"
+
+[node name="ProductUserEntry" type="LineEdit" parent="NameBrandCPU"]
+offset_left = 4.0
+offset_top = 30.0
+offset_right = 276.0
+offset_bottom = 61.0
+max_length = 15
+
+[node name="clear_textbox" type="Button" parent="NameBrandCPU"]
+anchors_preset = -1
+anchor_top = 0.45
+anchor_bottom = 0.45
+offset_left = 4.0
+offset_top = -10.0
+offset_right = 134.0
+offset_bottom = 23.0
+text = "Clear"
+
+[node name="Cancel_prod_name" type="Button" parent="NameBrandCPU"]
+anchors_preset = -1
+anchor_top = 0.45
+anchor_bottom = 0.45
+offset_left = 6.0
+offset_top = 56.0
+offset_right = 136.0
+offset_bottom = 89.0
+text = "Cancel"
+
+[node name="proceed_prod_name" type="Button" parent="NameBrandCPU"]
+anchors_preset = -1
+anchor_top = 0.45
+anchor_bottom = 0.45
+offset_left = 145.0
+offset_top = 56.0
+offset_right = 275.0
+offset_bottom = 89.0
+text = "OK"
 
 [connection signal="pressed" from="OptionsContainer/MainMenuGo" to="." method="_on_main_menu_go_pressed"]
 [connection signal="pressed" from="OptionsContainer/CloseOptions" to="." method="_on_close_options_pressed"]
@@ -274,3 +320,4 @@ force_native = true
 [connection signal="pressed" from="GameplayComponents/Close" to="." method="_on_close_pressed"]
 [connection signal="pressed" from="Actions" to="." method="_on_actions_pressed"]
 [connection signal="pressed" from="CreateCPUCoreUI/CreateCPUVB/HBoxContainer/CloseCPUCreation" to="." method="_on_close_cpu_creation_pressed"]
+[connection signal="pressed" from="CreateCPUCoreUI/CreateCPUVB/GridContainer/VBoxContainer/CPUChangeName_Btn" to="." method="_on_cpu_change_name_btn_pressed"]

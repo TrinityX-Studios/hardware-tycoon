@@ -8,6 +8,14 @@ extends Control
 @onready var confirmLeave = $ConfirmwindowLeave
 @onready var gameplaycomp = $GameplayComponents
 @onready var newCPU_UI = $CreateCPUCoreUI
+@onready var productUserEntryBox = $NameBrandCPU/ProductUserEntry
+@onready var NameBrandCPUDialog = $NameBrandCPU
+
+func _ready() -> void:
+	if productUserEntryBox != null:
+		print("DEBUG: Type of TextBox: ", productUserEntryBox.get_class())
+		productUserEntryBox.max_length = 15
+		print("Sucessfully limit entry to 15")
 
 func _on_button_pressed() -> void:
 	print("Showing up the Menu")
@@ -105,3 +113,14 @@ func _on_close_cpu_creation_pressed() -> void:
 		newCPU_UI.hide()
 	else:
 		print("It's already hidden")
+
+
+func _on_cpu_change_name_btn_pressed() -> void:
+#	CreateCPUCoreUI
+	if NameBrandCPUDialog.visible == true:
+		NameBrandCPUDialog.move_to_center()
+		NameBrandCPUDialog.grab_focus()
+	else:
+		NameBrandCPUDialog.show()
+		NameBrandCPUDialog.move_to_center()
+		NameBrandCPUDialog.grab_focus()
