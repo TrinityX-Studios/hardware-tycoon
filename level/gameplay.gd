@@ -27,11 +27,7 @@ func _on_button_pressed() -> void:
 	print("Showing up the Menu")
 	#get_tree().change_scene_to_file("res://main_menu.tscn")
 	optionsMenu_Window()
-#	Set all buttons to not work
-	$Actions.disabled = true
-	$HBoxContainer/Money.disabled = true
-	$HBoxContainer/Research.disabled = true
-	$HBoxContainer/Days.disabled = true
+
 	
 
 func tealUICall() -> void:
@@ -52,6 +48,11 @@ func optionsMenu_Window() -> void:
 	else:
 		tealUICall()
 		optionsContainer.show()
+		#	Set all buttons to not work
+		$Actions.disabled = true
+		$HBoxContainer/Money.disabled = true
+		$HBoxContainer/Research.disabled = true
+		$HBoxContainer/Days.disabled = true
 		
 
 func _on_close_options_pressed() -> void:
@@ -186,7 +187,6 @@ func _on_name_series_cpu_close_requested() -> void:
 		NameSeriesCPUDialog.hide()
 		
 
-
 func _on_money_pressed() -> void:
 	if accountancy_window.visible == false:
 		accountancy_window.show()
@@ -194,3 +194,7 @@ func _on_money_pressed() -> void:
 		accountancy_window.grab_focus()
 	else:
 		accountancy_window.hide()
+
+
+func _on_accountancy_close_requested() -> void:
+	accountancy_window.hide()

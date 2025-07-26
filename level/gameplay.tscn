@@ -395,6 +395,7 @@ offset_top = 12.0
 offset_right = 454.0
 offset_bottom = 39.0
 text = "Here are the Reports"
+scroll_active = false
 autowrap_mode = 0
 horizontal_alignment = 1
 
@@ -417,6 +418,41 @@ offset_top = 32.0
 offset_right = 449.0
 offset_bottom = 274.0
 
+[node name="ResearchWindow" type="Window" parent="."]
+title = "Research Technology"
+initial_position = 1
+size = Vector2i(650, 345)
+unresizable = true
+always_on_top = true
+
+[node name="RichTextLabel" type="RichTextLabel" parent="ResearchWindow"]
+offset_right = 650.0
+offset_bottom = 24.0
+text = "Research Technologies now"
+scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TabBar" type="TabBar" parent="ResearchWindow"]
+offset_top = 29.0
+offset_right = 652.0
+offset_bottom = 60.0
+size_flags_horizontal = 3
+current_tab = 0
+tab_alignment = 1
+select_with_rmb = true
+tab_count = 2
+tab_0/title = "Research"
+tab_0/tooltip = "Find available things to research for improvement"
+tab_1/title = "Funding"
+tab_1/tooltip = "Manage how would you fund your RnD, the more money you invest to the RnD, the faster you can unlock stuff, recommended for late game"
+
+[node name="Panel" type="Panel" parent="ResearchWindow"]
+offset_left = 4.0
+offset_top = 60.0
+offset_right = 651.0
+offset_bottom = 346.0
+
 [connection signal="pressed" from="OptionsContainer/MainMenuGo" to="." method="_on_main_menu_go_pressed"]
 [connection signal="pressed" from="OptionsContainer/CloseOptions" to="." method="_on_close_options_pressed"]
 [connection signal="pressed" from="HBoxContainer/Money" to="." method="_on_money_pressed"]
@@ -435,3 +471,4 @@ offset_bottom = 274.0
 [connection signal="close_requested" from="NameSeriesCPU" to="." method="_on_name_series_cpu_close_requested"]
 [connection signal="pressed" from="NameSeriesCPU/clear_textbox_S" to="." method="_on_clear_textbox_s_pressed"]
 [connection signal="pressed" from="NameSeriesCPU/Cancel_prod_name_S" to="." method="_on_cancel_prod_name_s_pressed"]
+[connection signal="close_requested" from="Accountancy" to="." method="_on_accountancy_close_requested"]
