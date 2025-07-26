@@ -375,15 +375,19 @@ exclusive = true
 unresizable = true
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Accountancy"]
-offset_right = 346.0
-offset_bottom = 40.0
+offset_left = 2.0
+offset_top = 12.0
+offset_right = 454.0
+offset_bottom = 39.0
 text = "Here are the Reports"
+autowrap_mode = 0
+horizontal_alignment = 1
 
 [node name="TabBar" type="TabBar" parent="Accountancy"]
-offset_left = 2.0
-offset_top = 20.0
-offset_right = 449.0
-offset_bottom = 51.0
+offset_left = 3.0
+offset_top = 44.0
+offset_right = 450.0
+offset_bottom = 75.0
 current_tab = 0
 tab_alignment = 1
 select_with_rmb = true
@@ -391,6 +395,12 @@ tab_count = 3
 tab_0/title = "Yearly Earnings"
 tab_1/title = "Expenditures"
 tab_2/title = "Loans"
+
+[node name="Panel" type="Panel" parent="Accountancy/TabBar"]
+offset_left = -2.0
+offset_top = 32.0
+offset_right = 449.0
+offset_bottom = 274.0
 
 [connection signal="pressed" from="OptionsContainer/MainMenuGo" to="." method="_on_main_menu_go_pressed"]
 [connection signal="pressed" from="OptionsContainer/CloseOptions" to="." method="_on_close_options_pressed"]
