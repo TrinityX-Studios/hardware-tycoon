@@ -8,14 +8,16 @@ extends Control
 @onready var confirmLeave = $ConfirmwindowLeave
 @onready var gameplaycomp = $GameplayComponents
 @onready var newCPU_UI = $CreateCPUCoreUI
-@onready var productUserEntryBox = $NameBrandCPU/ProductUserEntry
+@onready var productUserEntryBox_Brand = $NameBrandCPU/ProductUserEntry_B
 @onready var NameBrandCPUDialog = $NameBrandCPU
+@onready var productUserEntryBox_Series = $NameSeriesCPU/ProductUserEntry_S
+@onready var NameSeriesCPUDialog = $NameSeriesCPU
 
 
 func _ready() -> void:
-	if productUserEntryBox != null:
-		print("DEBUG: Type of TextBox: ", productUserEntryBox.get_class())
-		productUserEntryBox.max_length = 15
+	if productUserEntryBox_Brand != null:
+		print("DEBUG: Type of TextBox: ", productUserEntryBox_Brand.get_class())
+		productUserEntryBox_Brand.max_length = 15
 		print("Sucessfully limit entry to 15")
 
 func _on_button_pressed() -> void:
@@ -68,8 +70,7 @@ func _on_go_back_pressed() -> void:
 #	From confirm exit
 	if confirm2menu_ok2call() == false:
 		confirmLeave.hide()
-		
-		
+
 
 func on_check_actions_ok2summon() -> bool:
 	if gameplaycomp.visible == true:
@@ -125,3 +126,49 @@ func _on_cpu_change_name_btn_pressed() -> void:
 		NameBrandCPUDialog.show()
 		NameBrandCPUDialog.move_to_center()
 		NameBrandCPUDialog.grab_focus()
+
+
+func _on_cancel_prod_name_b_pressed() -> void:
+	if NameBrandCPUDialog.visible == true:
+		productUserEntryBox_Brand.clear()
+		NameBrandCPUDialog.hide()
+
+
+func _on_clear_textbox_b_pressed() -> void:
+	print("Being called")
+	if productUserEntryBox_Brand.text != null:
+		productUserEntryBox_Brand.clear()
+
+
+func _on_series_change_name_btn_2_pressed() -> void:
+	if NameSeriesCPUDialog.visible == false:
+		NameSeriesCPUDialog.show()
+		NameSeriesCPUDialog.move_to_center()
+		NameSeriesCPUDialog.grab_focus()
+	else:
+		NameSeriesCPUDialog.move_to_center()
+		NameSeriesCPUDialog.grab_focus()
+
+
+func _on_clear_textbox_s_pressed() -> void:
+	if productUserEntryBox_Series.text != null:
+		productUserEntryBox_Series.clear()
+
+
+
+func _on_cancel_prod_name_s_pressed() -> void:
+	if NameSeriesCPUDialog.visible == true:
+		productUserEntryBox_Series.clear()
+		NameSeriesCPUDialog.hide()
+
+
+func _on_name_brand_cpu_close_requested() -> void:
+	if NameBrandCPUDialog.visible == true:
+		productUserEntryBox_Brand.clear()
+		NameBrandCPUDialog.hide()
+
+
+func _on_name_series_cpu_close_requested() -> void:
+	if NameSeriesCPUDialog.visible == true:
+		productUserEntryBox_Series.clear()
+		NameSeriesCPUDialog.hide()

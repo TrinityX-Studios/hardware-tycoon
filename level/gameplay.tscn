@@ -272,16 +272,16 @@ popup_window = true
 offset_top = 1.0
 offset_right = 279.0
 offset_bottom = 32.0
-text = "Name the Product"
+text = "Name the Product's Brand"
 
-[node name="ProductUserEntry" type="LineEdit" parent="NameBrandCPU"]
+[node name="ProductUserEntry_B" type="LineEdit" parent="NameBrandCPU"]
 offset_left = 4.0
 offset_top = 30.0
 offset_right = 276.0
 offset_bottom = 61.0
 max_length = 15
 
-[node name="clear_textbox" type="Button" parent="NameBrandCPU"]
+[node name="clear_textbox_B" type="Button" parent="NameBrandCPU"]
 anchors_preset = -1
 anchor_top = 0.45
 anchor_bottom = 0.45
@@ -291,7 +291,7 @@ offset_right = 134.0
 offset_bottom = 23.0
 text = "Clear"
 
-[node name="Cancel_prod_name" type="Button" parent="NameBrandCPU"]
+[node name="Cancel_prod_name_B" type="Button" parent="NameBrandCPU"]
 anchors_preset = -1
 anchor_top = 0.45
 anchor_bottom = 0.45
@@ -301,7 +301,60 @@ offset_right = 136.0
 offset_bottom = 89.0
 text = "Cancel"
 
-[node name="proceed_prod_name" type="Button" parent="NameBrandCPU"]
+[node name="proceed_prod_name_B" type="Button" parent="NameBrandCPU"]
+anchors_preset = -1
+anchor_top = 0.45
+anchor_bottom = 0.45
+offset_left = 145.0
+offset_top = 56.0
+offset_right = 275.0
+offset_bottom = 89.0
+text = "OK"
+
+[node name="NameSeriesCPU" type="Window" parent="."]
+auto_translate_mode = 1
+title = "Name the Product"
+initial_position = 1
+size = Vector2i(280, 180)
+visible = false
+unresizable = true
+always_on_top = true
+popup_window = true
+
+[node name="WINLABEL_NEWCPU" type="RichTextLabel" parent="NameSeriesCPU"]
+offset_top = 1.0
+offset_right = 279.0
+offset_bottom = 32.0
+text = "Name the Product's Series"
+
+[node name="ProductUserEntry_S" type="LineEdit" parent="NameSeriesCPU"]
+offset_left = 4.0
+offset_top = 30.0
+offset_right = 276.0
+offset_bottom = 61.0
+max_length = 15
+
+[node name="clear_textbox_S" type="Button" parent="NameSeriesCPU"]
+anchors_preset = -1
+anchor_top = 0.45
+anchor_bottom = 0.45
+offset_left = 4.0
+offset_top = -10.0
+offset_right = 134.0
+offset_bottom = 23.0
+text = "Clear"
+
+[node name="Cancel_prod_name_S" type="Button" parent="NameSeriesCPU"]
+anchors_preset = -1
+anchor_top = 0.45
+anchor_bottom = 0.45
+offset_left = 6.0
+offset_top = 56.0
+offset_right = 136.0
+offset_bottom = 89.0
+text = "Cancel"
+
+[node name="proceed_prod_nameS" type="Button" parent="NameSeriesCPU"]
 anchors_preset = -1
 anchor_top = 0.45
 anchor_bottom = 0.45
@@ -321,3 +374,10 @@ text = "OK"
 [connection signal="pressed" from="Actions" to="." method="_on_actions_pressed"]
 [connection signal="pressed" from="CreateCPUCoreUI/CreateCPUVB/HBoxContainer/CloseCPUCreation" to="." method="_on_close_cpu_creation_pressed"]
 [connection signal="pressed" from="CreateCPUCoreUI/CreateCPUVB/GridContainer/VBoxContainer/CPUChangeName_Btn" to="." method="_on_cpu_change_name_btn_pressed"]
+[connection signal="pressed" from="CreateCPUCoreUI/CreateCPUVB/GridContainer/VBoxContainer/SeriesChangeName_Btn2" to="." method="_on_series_change_name_btn_2_pressed"]
+[connection signal="close_requested" from="NameBrandCPU" to="." method="_on_name_brand_cpu_close_requested"]
+[connection signal="pressed" from="NameBrandCPU/clear_textbox_B" to="." method="_on_clear_textbox_b_pressed"]
+[connection signal="pressed" from="NameBrandCPU/Cancel_prod_name_B" to="." method="_on_cancel_prod_name_b_pressed"]
+[connection signal="close_requested" from="NameSeriesCPU" to="." method="_on_name_series_cpu_close_requested"]
+[connection signal="pressed" from="NameSeriesCPU/clear_textbox_S" to="." method="_on_clear_textbox_s_pressed"]
+[connection signal="pressed" from="NameSeriesCPU/Cancel_prod_name_S" to="." method="_on_cancel_prod_name_s_pressed"]
