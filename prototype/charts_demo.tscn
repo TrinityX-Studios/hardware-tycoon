@@ -1,0 +1,52 @@
+[gd_scene load_steps=3 format=3 uid="uid://bdf2mkdnxqli5"]
+
+[ext_resource type="Script" uid="uid://cww2qo1e2wsjk" path="res://prototype/charts_demo.gd" id="1_3qgak"]
+[ext_resource type="Script" uid="uid://ikdxpc3pm6rs" path="res://addons/easy_charts/control_charts/chart.gd" id="2_ldr5a"]
+
+[node name="ChartsDemo" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_3qgak")
+
+[node name="Chart" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.099
+anchor_right = 0.099
+anchor_bottom = 0.042
+offset_left = -86.05
+offset_top = 3.0
+offset_right = 85.95
+offset_bottom = 165.84
+script = ExtResource("2_ldr5a")
+metadata/_custom_type_script = "uid://ikdxpc3pm6rs"
+
+[node name="Chart2" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.498
+anchor_right = 0.5
+anchor_bottom = 0.106
+offset_left = -86.1
+offset_top = 8.0
+offset_right = 84.0
+offset_bottom = 140.12
+script = ExtResource("2_ldr5a")
+metadata/_custom_type_script = "uid://ikdxpc3pm6rs"
+
+[node name="Chart3" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.293
+anchor_right = 0.293
+anchor_bottom = 0.081
+offset_left = -86.35
+offset_top = 6.0
+offset_right = 85.65
+offset_bottom = 150.12
+script = ExtResource("2_ldr5a")
+metadata/_custom_type_script = "uid://ikdxpc3pm6rs"

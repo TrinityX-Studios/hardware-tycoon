@@ -73,6 +73,20 @@ offset_bottom = 130.0
 theme_override_fonts/normal_font = ExtResource("4_jix8l")
 bbcode_enabled = true
 
+[node name="easter_chart" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.309
+anchor_top = 0.133
+anchor_right = 0.309
+anchor_bottom = 0.133
+offset_left = -51.52
+offset_top = -31.76
+offset_right = 51.48
+offset_bottom = 32.24
+flat = true
+
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Play" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Settings" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="easter_chart" to="." method="_on_easter_chart_pressed"]
