@@ -516,6 +516,22 @@ flat = true
 icon_alignment = 1
 expand_icon = true
 
+[node name="StatusContainerV" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.963
+anchor_right = 0.963
+offset_left = -255.85
+offset_top = 12.0
+offset_right = 20.15
+offset_bottom = 252.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="StatusContainerV"]
+layout_mode = 2
+text = "Company Status"
+fit_content = true
+scroll_active = false
+
 [connection signal="pressed" from="OptionsContainer/MainMenuGo" to="." method="_on_main_menu_go_pressed"]
 [connection signal="pressed" from="OptionsContainer/CloseOptions" to="." method="_on_close_options_pressed"]
 [connection signal="pressed" from="HBoxContainer/Money" to="." method="_on_money_pressed"]
