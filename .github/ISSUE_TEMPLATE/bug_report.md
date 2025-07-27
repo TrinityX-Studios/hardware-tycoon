@@ -3,7 +3,7 @@ name: Bug report
 about: Create a report to help us improve
 title: "[BUG]"
 labels: bug
-assignees: fenix-hub
+assignees: Mizumo-prjkt
 
 ---
 
@@ -25,8 +25,8 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. Windows]
- - Godot Engine Version [e.g. 3.2.3rc6]
-- Plugin Version [e.g. v1.7.0]
+ - Game Version: [e.g. 1.0.0]
+ - Architecture: [e.g. x64, x86, arm64, arm32]
 
 **Additional context**
 Add any other context about the problem here.
