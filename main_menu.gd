@@ -54,4 +54,5 @@ func _on_quit_pressed() -> void:
 
 func _on_easter_chart_pressed() -> void:
 	# get_tree().change_scene_to_file("res://addons/easy_charts/examples/bar_chart/Control.tscn")
-	get_tree().change_scene_to_file("res://prototype/mizu-s_attempt/graphline.tscn")
+	# get_tree().change_scene_to_file("res://prototype/mizu-s_attempt/graphline.tscn")
+	get_tree().change_scene_to_file("res://prototype/mizu-s_attempt/graph4economy.tscn")
