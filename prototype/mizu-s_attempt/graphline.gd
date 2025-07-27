@@ -38,7 +38,7 @@ func _ready() -> void:
 	var x: Array = ["Day 1", "Day 2", "Day 3", "Day 4"]
 	
 	# Referring to money
-	var y: Array = [4000, 2355, 7468, 2188]
+	var y: Array = [10, 5, 6, 8]
 	
 	# @Mizumo-prjkt says:
 	# No i dont call the variable 'cp'

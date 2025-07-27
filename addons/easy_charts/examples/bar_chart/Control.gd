@@ -48,7 +48,7 @@ func _ready():
 	set_process(false)
 
 
-var new_val: float = 4.5
+var new_val: float = 5
 
 func _process(delta: float):
 	# This function updates the values of a function and then updates the plot
