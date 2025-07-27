@@ -35,7 +35,7 @@ window/stretch/aspect="ignore"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/_Godot-IDE_/plugin.cfg", "res://addons/ai_assistant_hub/plugin.cfg", "res://addons/easy_charts/plugin.cfg", "res://addons/math_extensions/plugin.cfg", "res://addons/theme_gen_save_sync/plugin.cfg")
+enabled=PackedStringArray("res://addons/_Godot-IDE_/plugin.cfg", "res://addons/ai_assistant_hub/plugin.cfg", "res://addons/color-palette/plugin.cfg", "res://addons/easy_charts/plugin.cfg", "res://addons/math_extensions/plugin.cfg", "res://addons/theme_gen_save_sync/plugin.cfg")
 
 [file_customization]
 
@@ -56,7 +56,7 @@ limits/message_queue/max_size_mb=64
 [plugins]
 
 ai_assistant_hub/base_url="http://127.0.0.1:11434"
-ai_assistant_hub/llm_api="ollama_api"
+ai_assistant_hub/llm_api="gemini_api"
 ai_assistant_hub/preferences/thinking_target=0
 ai_assistant_hub/preferences/always_scroll_to_bottom=false
 

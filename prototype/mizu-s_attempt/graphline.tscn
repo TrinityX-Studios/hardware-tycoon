@@ -1,0 +1,39 @@
+[gd_scene load_steps=3 format=3 uid="uid://d02ltilv11rds"]
+
+[ext_resource type="Script" uid="uid://cb4jsuha21rpm" path="res://prototype/mizu-s_attempt/graphline.gd" id="1_5bm61"]
+[ext_resource type="PackedScene" uid="uid://dlwq4kmdb3bhs" path="res://addons/easy_charts/control_charts/chart.tscn" id="2_5bm61"]
+
+[node name="Graphline" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_5bm61")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 945.0
+offset_bottom = 478.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer"]
+layout_mode = 2
+text = "Go Random with the Data"
+fit_content = true
+scroll_active = false
+
+[node name="CheckButton" type="CheckButton" parent="VBoxContainer/RichTextLabel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.006
+anchor_right = 1.006
+offset_left = -43.67
+offset_top = -2.0
+offset_right = 0.329956
+offset_bottom = 22.0
+
+[node name="Chart" parent="VBoxContainer" instance=ExtResource("2_5bm61")]
+layout_mode = 2
+
+[connection signal="pressed" from="VBoxContainer/RichTextLabel/CheckButton" to="." method="_on_check_button_pressed"]
