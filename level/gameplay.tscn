@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cclmwir3uy1gw"]
+[gd_scene load_steps=9 format=3 uid="uid://cclmwir3uy1gw"]
 
 [ext_resource type="Script" uid="uid://c25xxvn6llpyj" path="res://level/gameplay.gd" id="1_5p71y"]
 [ext_resource type="Texture2D" uid="uid://heix7b7hf8sk" path="res://images/teal.png" id="2_jcfem"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://do7rcti1ew4p2" path="res://images/play-svgrepo-com.png" id="5_ogtqb"]
 [ext_resource type="Texture2D" uid="uid://ctuqyk4mwkj34" path="res://images/fast-forward-svgrepo-com.png" id="6_gshik"]
 [ext_resource type="Texture2D" uid="uid://dljfshkoegwd" path="res://images/fast-forward-x3-svgrepo-com.png" id="7_ogtqb"]
+[ext_resource type="Script" uid="uid://ikdxpc3pm6rs" path="res://addons/easy_charts/control_charts/chart.gd" id="8_ogtqb"]
 
 [node name="GameplayUI" type="Control"]
 layout_mode = 3
@@ -98,7 +99,7 @@ size_flags_horizontal = 3
 
 [node name="Days" type="Button" parent="HBoxContainer"]
 layout_mode = 2
-text = "YYYY/MM/DD: "
+text = "YYYY/MM:"
 
 [node name="VSeparator3" type="VSeparator" parent="HBoxContainer"]
 layout_mode = 2
@@ -531,6 +532,22 @@ layout_mode = 2
 text = "Company Status"
 fit_content = true
 scroll_active = false
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="StatusContainerV"]
+layout_mode = 2
+text = "Financial Chart"
+fit_content = true
+scroll_active = false
+
+[node name="PanelContainer" type="PanelContainer" parent="StatusContainerV"]
+layout_mode = 2
+
+[node name="Chart" type="PanelContainer" parent="StatusContainerV/PanelContainer"]
+layout_mode = 2
+script = ExtResource("8_ogtqb")
+metadata/_custom_type_script = "uid://ikdxpc3pm6rs"
 
 [connection signal="pressed" from="OptionsContainer/MainMenuGo" to="." method="_on_main_menu_go_pressed"]
 [connection signal="pressed" from="OptionsContainer/CloseOptions" to="." method="_on_close_options_pressed"]

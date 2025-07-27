@@ -48,6 +48,15 @@ func _ready() -> void:
 	# Initial Activation
 	set_active_time_btn(pauseBtn)
 	
+	# Player Funds ar Start
+	var playerMoney = 50000000
+	var researchPoints = 300
+	
+	# Time
+	var maxYear = 2030
+	var startYear = 1970
+	
+	
 # Central code to manage flat states
 func set_active_time_btn(activated_button: Button) -> void:
 	for button in TimeControl_BTN:
