@@ -22,8 +22,29 @@ extends Control
 @onready var ffx_one_Btn = $DateTimePopup/FFx1
 @onready var ffx_two_Btn = $DateTimePopup/FFx2
 
+# Charts
+@onready var pieChartEconomy: Chart = $StatusContainerV/MainUIChart
+## Related
+var economic_f1: Function
+## Graph for pie
+var x_values: Array
+var y_label: Array
+var economic_piechart_props: ChartProperties
+var pieColors: Gradient
+
+
+
 # Array for time controls
 var TimeControl_BTN: Array[Button] = []
+
+# Global Variables
+# Player Funds ar Start
+var playerMoney = 50000000
+var researchPoints = 300
+	
+# Time
+var maxYear = 2030
+var startYear = 1970
 
 
 func _ready() -> void:
@@ -48,15 +69,47 @@ func _ready() -> void:
 	# Initial Activation
 	set_active_time_btn(pauseBtn)
 	
-	# Player Funds ar Start
-	var playerMoney = 50000000
-	var researchPoints = 300
+	x_values = [25.0, 25.0, 25.0, 25.0]
+	y_label = ["Irminsul Teknologik", "Simulanka Semiconductor Corporation", "Interastral Technologies", "Placeholder Tech Corp (You)"]
 	
-	# Time
-	var maxYear = 2030
-	var startYear = 1970
+	# Props
+	economic_piechart_props = ChartProperties.new()
+	economic_piechart_props.colors.frame = Color("#161a1d")
+	economic_piechart_props.colors.background = Color.TRANSPARENT
+	economic_piechart_props.colors.grid = Color("#506a8d")
+	economic_piechart_props.colors.text = Color.WHITE_SMOKE
+	economic_piechart_props.draw_bounding_box = false
+	economic_piechart_props.title = "CPU Market shares"
+	economic_piechart_props.draw_grid_box = false
+	economic_piechart_props.show_legend = true
+	economic_piechart_props.show_tick_labels = false
+	economic_piechart_props.interactive = true # Since the UI space is tiny
+												# It's better to have this smol
 	
+	# Colors
+	pieColors = Gradient.new()
+	pieColors.set_color(0, Color.PALE_TURQUOISE)
+	pieColors.set_color(1, Color.PALE_GOLDENROD)
 	
+	# MainUI fn
+	economic_f1 = Function.new(
+		x_values, y_label, "",
+		{
+			gradient = pieColors,
+			type = Function.Type.PIE
+		}
+	)
+	
+	# Data Plot
+	pieChartEconomy.plot([economic_f1], economic_piechart_props)
+	set_process(true)
+	
+# Update chart value after _ready contents have been initialized
+var irminsul_share = 25.0
+var simulanka_share = 25.0
+var interastral_technologies = 25.0
+var playerCompany = 25.0
+
 # Central code to manage flat states
 func set_active_time_btn(activated_button: Button) -> void:
 	for button in TimeControl_BTN:
@@ -264,4 +317,37 @@ func _on_days_pressed() -> void:
 		dateTime_popup.hide()
 
 
-# GraphF
+# _process func
+func _process(delta: float) -> void:
+	# Coded this to test if it works
+	irminsul_share = 25.0 + sin(Time.get_ticks_msec() / 1000.0 * 0.4 ) * 5.0
+	simulanka_share = 25.0 + sin(Time.get_ticks_msec() / 1000.0 * 0.7 ) * 5.0
+	interastral_technologies = 25.0 + cos(Time.get_ticks_msec() / 1000.0 * 0.6 ) * 5.0
+	playerCompany = 25.0 + cos(Time.get_ticks_msec() / 1000.0 * 0.9 ) * 5.0
+	
+	# Unify result
+	var total_shares = irminsul_share + simulanka_share + interastral_technologies + playerCompany
+	
+	# Avoid any division if total estim. hits 0
+	if total_shares > 0:
+		x_values[0] = (irminsul_share/total_shares) * 100.0
+		x_values[1] = (simulanka_share/total_shares) * 100.0
+		x_values[2] = (interastral_technologies/total_shares) * 100.0
+		x_values[3] = (playerCompany/total_shares) * 100.0
+	else:
+		x_values[0] = 25.0
+		x_values[1] = 25.0
+		x_values[2] = 25.0
+		x_values[3] = 25.0
+	
+	economic_f1 = Function.new(
+		x_values, y_label, "", {
+			gradient = pieColors,
+			type = Function.Type.PIE
+		}
+	)
+	
+	pieChartEconomy.plot([economic_f1], economic_piechart_props)
+	
+	pieChartEconomy.queue_redraw()
+	

@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://do7rcti1ew4p2" path="res://images/play-svgrepo-com.png" id="5_ogtqb"]
 [ext_resource type="Texture2D" uid="uid://ctuqyk4mwkj34" path="res://images/fast-forward-svgrepo-com.png" id="6_gshik"]
 [ext_resource type="Texture2D" uid="uid://dljfshkoegwd" path="res://images/fast-forward-x3-svgrepo-com.png" id="7_ogtqb"]
-[ext_resource type="Script" uid="uid://ikdxpc3pm6rs" path="res://addons/easy_charts/control_charts/chart.gd" id="8_ogtqb"]
+[ext_resource type="PackedScene" uid="uid://dlwq4kmdb3bhs" path="res://addons/easy_charts/control_charts/chart.tscn" id="8_ogtqb"]
 
 [node name="GameplayUI" type="Control"]
 layout_mode = 3
@@ -522,10 +522,10 @@ layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.963
 anchor_right = 0.963
-offset_left = -255.85
+offset_left = -446.85
 offset_top = 12.0
 offset_right = 20.15
-offset_bottom = 252.0
+offset_bottom = 312.0
 
 [node name="RichTextLabel" type="RichTextLabel" parent="StatusContainerV"]
 layout_mode = 2
@@ -537,17 +537,12 @@ vertical_alignment = 1
 
 [node name="RichTextLabel2" type="RichTextLabel" parent="StatusContainerV"]
 layout_mode = 2
-text = "Financial Chart"
+text = "Market Shares"
 fit_content = true
 scroll_active = false
 
-[node name="PanelContainer" type="PanelContainer" parent="StatusContainerV"]
+[node name="MainUIChart" parent="StatusContainerV" instance=ExtResource("8_ogtqb")]
 layout_mode = 2
-
-[node name="Chart" type="PanelContainer" parent="StatusContainerV/PanelContainer"]
-layout_mode = 2
-script = ExtResource("8_ogtqb")
-metadata/_custom_type_script = "uid://ikdxpc3pm6rs"
 
 [connection signal="pressed" from="OptionsContainer/MainMenuGo" to="." method="_on_main_menu_go_pressed"]
 [connection signal="pressed" from="OptionsContainer/CloseOptions" to="." method="_on_close_options_pressed"]
