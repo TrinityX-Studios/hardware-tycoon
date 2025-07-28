@@ -61,10 +61,55 @@ var motorola_share = 39.0
 func _process(delta: float) -> void:
 	# Simulate changes using sin/cos for oscilation
 	
-	intel_share = 24.0 + sin(500 / 1000.0 * 0.8) * 5.0
-	amd_share = 18.0 + cos(500 / 1000.0 * 0.7) * 3.0
-	via_share = 19.0 + sin(500 / 1000.0 * 0.4) * 4.0
-	motorola_share = 39.0 + cos(500 / 1000.0 * 0.6) * 6.0
+	intel_share = 24.0 + sin(Time.get_ticks_msec() / 1000.0 * 0.8) * 5.0
+	amd_share = 18.0 + cos(Time.get_ticks_msec() / 1000.0 * 0.7) * 4.0
+	via_share = 19.0 + sin(Time.get_ticks_msec() / 1000.0 * 0.9) * 3.0
+	motorola_share = 39.0 + cos(Time.get_ticks_msec() / 1000.0 * 0.6) * 6.0
 	
 	# Unify result
 	var total_share_market = motorola_share + intel_share + amd_share + via_share
+	
+	# Avoid any division if the shares hit zero or the game engine would
+	# freak out lmao
+	if total_share_market > 0:
+		x_values[0] = (intel_share/total_share_market) * 100.0
+		x_values[1] = (amd_share/total_share_market) * 100.0
+		x_values[2] = (via_share/total_share_market) * 100.0
+		x_values[3] = (motorola_share/total_share_market) * 100.0
+	else:
+		x_values[0] = 25.0
+		x_values[1] = 25.0
+		x_values[2] = 25.0
+		x_values[3] = 25.0
+
+	# @Mizumo-prjkt
+	# Uncomment if you want to check what's the issue
+	# if you are done with it, recomment
+	# because it will flood your Debug console and would eventually
+	# lag your system lol
+	# @end: Mizumo-prjkt
+	#print("Values")
+	#print("Total share report: ", total_share_market)
+	#print("Intel: ", x_values[0])
+	#print("AMD: ", x_values[1])
+	#print("VIA: ", x_values[2])
+	#print("MTD: ", x_values[3])
+	
+	f1 = Function.new(
+		x_values, y_labels, "",
+		{
+			gradient = pie_gradient,
+			type = Function.Type.PIE
+		}
+	)
+	
+	pChart.plot([f1], chart_props)
+	
+	# Replot the chart with new instance
+	pChart.queue_redraw()
+	
+	
+
+func _on_check_button_pressed() -> void:
+	set_process(not is_processing())
+	
