@@ -39,7 +39,7 @@ func random_and_print_motd() -> void:
 func _on_play_pressed() -> void:
 #	# This is temporary, after that, just comment the dummy code
 	print("Pressed Play")
-	get_tree().change_scene_to_file("res://level/gameplay.tscn")
+	get_tree().change_scene_to_file("res://level/gameplay.scn")
 
 
 func _on_settings_pressed() -> void:

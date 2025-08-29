@@ -50,10 +50,10 @@ text = "Quit"
 layout_mode = 2
 anchor_left = 0.114
 anchor_right = 0.114
-offset_left = -4.92001
-offset_top = 64.0
-offset_right = 522.08
-offset_bottom = 228.0
+offset_left = -29.92
+offset_top = 40.0
+offset_right = 497.08
+offset_bottom = 204.0
 theme = ExtResource("3_jix8l")
 bbcode_enabled = true
 text = "[b][font_size=38]Hardware 
