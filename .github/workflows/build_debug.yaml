@@ -19,22 +19,31 @@ jobs:
           commit=$(git rev-parse --short HEAD)
           timestamp=$(date +"%Y-%m-%d %H:%M:%S")
           
-          echo "commit=$commit" >> $GITHUB_OUTPUT
-          echo "tag=$tag" >> $GITHUB_OUTPUT
-          echo "timestamp=$timestamp" >> $GITHUB_OUTPUT
-          echo "::set-output name=commit::$commit"
-          echo "::set-output name=tag::$tag"
-          echo "::set-output name=timestamp::$timestamp"
+          echo "commit_hash=$commit" >> $GITHUB_ENV
+          echo "tag=$tag" >> $GITHUB_ENV
+          echo "timestamp=$timestamp" >> $GITHUB_ENV
 
       - name: 🔧 Configure Linux Build Environment
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang ninja-build pkg-config libpulse-dev libnss3-dev libxkbcommon-dev
+          sudo apt-get install -y clang ninja-build pkg-config libpulse-dev libnss3-dev libxkbcommon-dev libgtk-3-dev
 
       - name: 🏗️ Install Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+
+      - name: ☕ Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 🧹 Remove local-only gradle.properties settings
+        run: |
+          if [ -f android/gradle.properties ]; then
+            sed -i '/org.gradle.java.home/d' android/gradle.properties
+          fi
 
       - name: 🛠️ Install Dart tools
         run: |
