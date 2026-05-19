@@ -44,5 +44,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Personal Dev stuff for taking notes
+# Others
 ./notes/
+android/.kotlin/sessions/kotlin-compiler-1884854470398214630.salive

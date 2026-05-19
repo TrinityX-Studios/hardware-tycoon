@@ -8,6 +8,10 @@ import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import '../core/app_state.dart';
 
+import 'dart:io';
+import 'package:flutter/services.dart';
+import '../../versioning/versioning_aware.dart';
+
 class MainMenuView extends StatelessWidget {
   final AppStateMachine appState;
 
@@ -79,7 +83,11 @@ class MainMenuView extends StatelessWidget {
                   label: 'EXIT CORE',
                   icon: Icons.exit_to_app,
                   onTap: () {
-                    // Real app would use SystemNavigator.pop() or window manager
+                    if (Platform.isAndroid) {
+                      SystemNavigator.pop();
+                    } else {
+                      exit(0);
+                    }
                   },
                 ),
               ],
@@ -90,11 +98,8 @@ class MainMenuView extends StatelessWidget {
           Positioned(
             bottom: 16.0,
             right: 24.0,
-            child: Text(
-              'v1.0.0-alpha.1 // CORE OK',
-              style: HTTypography.metricLabel.copyWith(
-                color: HTColors.textMuted,
-              ),
+            child: VersionWatermark(
+              color: HTColors.textMuted,
             ),
           ),
         ],

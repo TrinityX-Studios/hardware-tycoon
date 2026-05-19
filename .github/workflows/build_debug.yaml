@@ -1,0 +1,82 @@
+name: Build Debug Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_hash:
+        description: 'Specific Git commit hash to build'
+        required: true
+        default: 'HEAD'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚀 Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.commit_hash }}
+
+      - name: 🎯 Set environment variables
+        id: vars
+        run: |
+          # Extract current tag from git
+          tag=$(git tag --points-at HEAD 2>/dev/null || echo "v1.0.0-alpha.1")
+          commit=$(git rev-parse --short HEAD)
+          timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+          
+          echo "commit=$commit" >> $GITHUB_OUTPUT
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+          echo "timestamp=$timestamp" >> $GITHUB_OUTPUT
+          echo "::set-output name=commit::$commit"
+          echo "::set-output name=tag::$tag"
+          echo "::set-output name=timestamp::$timestamp"
+
+      - name: 🔧 Configure Linux Build Environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang ninja-build pkg-config libpulse-dev libnss3-dev libxkbcommon-dev
+
+      - name: 🏗️ Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: 🛠️ Install Dart tools
+        run: |
+          dart --version
+
+      
+      - name: 📋 View Git Information
+        run: |
+          echo "=== GIT INFO ==="
+          git log -1 --pretty=fuller
+          echo "================"
+      
+      - name: Build Debug Release (Linux)
+        continue-on-error: true
+        run: |
+          ./build.sh debug linux
+
+      - name: Build Debug Release (APK)
+        continue-on-error: true
+        run: |
+          ./build.sh debug apk         
+
+      - name: Package ZIP (Linux)
+        continue-on-error: true
+        run: |
+          zip -r hardware_tycoon_linux-${{ env.commit_hash }}.zip "build/linux/x64/debug/bundle"
+          
+      - name: Package APK (Android)
+        continue-on-error: true
+        run: |
+          zip -r "hardware_tycoon_android-${{ env.commit_hash }}.apk.zip" "build/android/app/debug/app-debug.apk"
+
+      - name: Upload to Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: hardware-tycoon-debug
+          path: |
+            hardware_tycoon_linux-${{ env.commit_hash }}.zip
+            hardware_tycoon_android-${{ env.commit_hash }}.apk.zip
