@@ -180,13 +180,13 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
     final isDspUnlocked = state.isNodeUnlocked('digital_signal_processing');
 
     // BitWidth unlocking status
-    final isBitWidthLocked = !state.isNodeUnlocked(_selectedBitWidth.requiredTechId);
+    final isBitWidthLocked = !_selectedBitWidth.isUnlocked;
 
     // Casing unlocking status
-    final isCasingLocked = !state.isNodeUnlocked(_selectedCasing.requiredTechId);
+    final isCasingLocked = !_selectedCasing.isUnlocked;
 
     // IHS unlocking status
-    final isIhsLocked = !state.isNodeUnlocked(_selectedIhs.requiredTechId);
+    final isIhsLocked = !_selectedIhs.isUnlocked;
 
     // Layout gating checks
     String? layoutGateWarning;
@@ -910,43 +910,39 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
             const SizedBox(height: 6.0),
             Container(
               decoration: HTDecorations.panelBox(),
-              child: Column(
-                children: [
-                  RadioListTile<BitWidth>(
-                    title: const Text('8-Bit Data Word', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 10)),
-                    subtitle: const Text('Historical baseline standard.', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textSecondary, fontSize: 8)),
-                    value: BitWidth.bit8,
-                    groupValue: _selectedBitWidth,
-                    activeColor: HTColors.primary,
-                    dense: true,
-                    onChanged: (val) {
-                      if (val != null) {
-                        setState(() => _selectedBitWidth = val);
-                      }
-                    },
-                  ),
-                  const Divider(color: HTColors.border, height: 1.0),
-                  RadioListTile<BitWidth>(
-                    title: const Text('16-Bit Data Word', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 10)),
-                    subtitle: Text(
-                      is16BitUnlocked 
-                          ? 'Late-60s premium compute throughput; adds transistor density (+150% FLOPS, +200% die area).' 
-                          : '[ LOCKED: REQUIRES 16-BIT ARCHITECTURE R&D ]',
-                      style: TextStyle(fontFamily: 'IBMPlexMono', color: is16BitUnlocked ? HTColors.textSecondary : Colors.redAccent, fontSize: 8),
+              child: RadioGroup<BitWidth>(
+                groupValue: _selectedBitWidth,
+                onChanged: (val) {
+                  if (val != null) {
+                    if (val == BitWidth.bit16 && !is16BitUnlocked) return;
+                    setState(() => _selectedBitWidth = val);
+                  }
+                },
+                child: Column(
+                  children: [
+                    RadioListTile<BitWidth>(
+                      title: const Text('8-Bit Data Word', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 10)),
+                      subtitle: const Text('Historical baseline standard.', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textSecondary, fontSize: 8)),
+                      value: BitWidth.bit8,
+                      activeColor: HTColors.primary,
+                      dense: true,
                     ),
-                    value: BitWidth.bit16,
-                    groupValue: _selectedBitWidth,
-                    activeColor: HTColors.primary,
-                    dense: true,
-                    onChanged: is16BitUnlocked
-                        ? (val) {
-                            if (val != null) {
-                              setState(() => _selectedBitWidth = val);
-                            }
-                          }
-                        : null,
-                  ),
-                ],
+                    const Divider(color: HTColors.border, height: 1.0),
+                    RadioListTile<BitWidth>(
+                      title: const Text('16-Bit Data Word', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 10)),
+                      subtitle: Text(
+                        is16BitUnlocked 
+                            ? 'Late-60s premium compute throughput; adds transistor density (+150% FLOPS, +200% die area).' 
+                            : '[ LOCKED: REQUIRES 16-BIT ARCHITECTURE R&D ]',
+                        style: TextStyle(fontFamily: 'IBMPlexMono', color: is16BitUnlocked ? HTColors.textSecondary : Colors.redAccent, fontSize: 8),
+                      ),
+                      value: BitWidth.bit16,
+                      activeColor: HTColors.primary,
+                      dense: true,
+                      enabled: is16BitUnlocked,
+                    ),
+                  ],
+                ),
               ),
             ),
             if (isBitWidthLocked) ...[
@@ -1010,38 +1006,40 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
             const SizedBox(height: 6.0),
             Container(
               decoration: HTDecorations.panelBox(),
-              child: Column(
-                children: [
-                  RadioListTile<String>(
-                    title: const Text('Microcoded CISC Layout', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 10)),
-                    subtitle: const Text('Native hardware decoder handling multi-cycle instructions. (+25% FLOPS, +20% thermal power, +\$10k cost)', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textSecondary, fontSize: 8)),
-                    value: 'cisc',
-                    groupValue: _enabledExtensions['cisc_layout'] == true ? 'cisc' : (_enabledExtensions['vliw_layout'] == true ? 'vliw' : null),
-                    activeColor: HTColors.primary,
-                    dense: true,
-                    onChanged: (val) {
-                      setState(() {
+              child: RadioGroup<String>(
+                groupValue: _enabledExtensions['cisc_layout'] == true ? 'cisc' : (_enabledExtensions['vliw_layout'] == true ? 'vliw' : null),
+                onChanged: (val) {
+                  if (val != null) {
+                    setState(() {
+                      if (val == 'cisc') {
                         _enabledExtensions['cisc_layout'] = true;
                         _enabledExtensions['vliw_layout'] = false;
-                      });
-                    },
-                  ),
-                  const Divider(color: HTColors.border, height: 1.0),
-                  RadioListTile<String>(
-                    title: const Text('Explicit Parallelism / Early VLIW Alternative', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 10)),
-                    subtitle: const Text('Complexity is offloaded to software compilers. Keeps physical silicon cold (0W overhead, 0% capacitance), but adds recurring R&D Compiler operating expenses (+\$50/day). (+20% FLOPS)', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textSecondary, fontSize: 8)),
-                    value: 'vliw',
-                    groupValue: _enabledExtensions['cisc_layout'] == true ? 'cisc' : (_enabledExtensions['vliw_layout'] == true ? 'vliw' : null),
-                    activeColor: HTColors.primary,
-                    dense: true,
-                    onChanged: (val) {
-                      setState(() {
+                      } else if (val == 'vliw') {
                         _enabledExtensions['cisc_layout'] = false;
                         _enabledExtensions['vliw_layout'] = true;
-                      });
-                    },
-                  ),
-                ],
+                      }
+                    });
+                  }
+                },
+                child: Column(
+                  children: [
+                    RadioListTile<String>(
+                      title: const Text('Microcoded CISC Layout', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 10)),
+                      subtitle: const Text('Native hardware decoder handling multi-cycle instructions. (+25% FLOPS, +20% thermal power, +\$10k cost)', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textSecondary, fontSize: 8)),
+                      value: 'cisc',
+                      activeColor: HTColors.primary,
+                      dense: true,
+                    ),
+                    const Divider(color: HTColors.border, height: 1.0),
+                    RadioListTile<String>(
+                      title: const Text('Explicit Parallelism / Early VLIW Alternative', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 10)),
+                      subtitle: const Text('Complexity is offloaded to software compilers. Keeps physical silicon cold (0W overhead, 0% capacitance), but adds recurring R&D Compiler operating expenses (+\$50/day). (+20% FLOPS)', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textSecondary, fontSize: 8)),
+                      value: 'vliw',
+                      activeColor: HTColors.primary,
+                      dense: true,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -1055,7 +1053,7 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
     final isFpuUnlocked = state.isNodeUnlocked('math_coprocessor');
     final isDspUnlocked = state.isNodeUnlocked('digital_signal_processing');
 
-    final isBitWidthLocked = !state.isNodeUnlocked(_selectedBitWidth.requiredTechId);
+    final isBitWidthLocked = !_selectedBitWidth.isUnlocked;
     final bitWidthTechNode = HistoricalTechTree.nodes.firstWhere((n) => n.id == _selectedBitWidth.requiredTechId);
 
     return SingleChildScrollView(
@@ -1070,7 +1068,7 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
           Row(
             children: BitWidth.values.map((width) {
               final isSelected = _selectedBitWidth == width;
-              final isUnlocked = state.isNodeUnlocked(width.requiredTechId);
+              final isUnlocked = width.isUnlocked;
               return Expanded(
                 child: GestureDetector(
                   onTap: () => setState(() => _selectedBitWidth = width),
@@ -1444,7 +1442,7 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
                         ),
                         style: const TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 9),
                         items: CasingType.values.map((casing) {
-                          final isUnlocked = state.isNodeUnlocked(casing.requiredTechId);
+                          final isUnlocked = casing.isUnlocked;
                           return DropdownMenuItem<CasingType>(
                             value: casing,
                             child: Text(
@@ -1489,7 +1487,7 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
                         ),
                         style: const TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 9),
                         items: IhsMaterial.values.map((ihs) {
-                          final isUnlocked = state.isNodeUnlocked(ihs.requiredTechId);
+                          final isUnlocked = ihs.isUnlocked;
                           return DropdownMenuItem<IhsMaterial>(
                             value: ihs,
                             child: Text(
