@@ -6,6 +6,7 @@ library;
 
 import 'package:flutter/foundation.dart';
 import 'game_state.dart';
+import '../managers/audio_manager.dart';
 
 enum AppScreen {
   mainMenu,
@@ -28,6 +29,8 @@ class AppStateMachine extends ChangeNotifier {
     _activeGameState?.pause();
     _currentScreen = AppScreen.mainMenu;
     notifyListeners();
+    // Play menu theme
+    AudioManager.instance.playBGM('audio/music/Laser_Groove.mp3');
   }
 
   void goToSetup() {
@@ -40,8 +43,20 @@ class AppStateMachine extends ChangeNotifier {
     notifyListeners();
   }
 
-  void goToSettings() {
+  AppScreen _settingsReturnScreen = AppScreen.mainMenu;
+  AppScreen get settingsReturnScreen => _settingsReturnScreen;
+
+  void goToSettings({AppScreen returnTo = AppScreen.mainMenu}) {
+    _settingsReturnScreen = returnTo;
     _currentScreen = AppScreen.settings;
+    notifyListeners();
+  }
+
+  void exitSettings() {
+    _currentScreen = _settingsReturnScreen;
+    if (_settingsReturnScreen == AppScreen.gameplay) {
+      _activeGameState?.startSimulation();
+    }
     notifyListeners();
   }
 
@@ -61,6 +76,9 @@ class AppStateMachine extends ChangeNotifier {
     _currentScreen = AppScreen.gameplay;
     notifyListeners();
     
+    // Play gameplay theme
+    AudioManager.instance.playBGM('audio/music/Voltaic.mp3');
+    
     // Start simulation ticks
     _activeGameState?.startSimulation();
   }
@@ -70,6 +88,10 @@ class AppStateMachine extends ChangeNotifier {
     _activeGameState = restoredState;
     _currentScreen = AppScreen.gameplay;
     notifyListeners();
+    
+    // Play gameplay theme
+    AudioManager.instance.playBGM('audio/music/Voltaic.mp3');
+    
     _activeGameState?.startSimulation();
   }
 

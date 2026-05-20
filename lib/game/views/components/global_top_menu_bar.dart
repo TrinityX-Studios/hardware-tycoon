@@ -84,6 +84,13 @@ class GlobalTopMenuBar extends StatelessWidget {
               isClosed: closedWindows.contains('foundry'),
               onTap: () => onToggleWindow!('foundry'),
             ),
+            const SizedBox(width: 4.0),
+            _WindowToggle(
+              icon: Icons.music_note,
+              label: 'MSC',
+              isClosed: closedWindows.contains('music_deck'),
+              onTap: () => onToggleWindow!('music_deck'),
+            ),
             const SizedBox(width: 8.0),
           ],
           
@@ -603,6 +610,24 @@ class _SystemMenuButton extends StatelessWidget {
                       ),
                     );
                   }
+                },
+              ),
+              
+              const SizedBox(height: 12.0),
+              
+              ElevatedButton.icon(
+                icon: const Icon(Icons.settings, size: 16),
+                label: const Text('SETTINGS'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: HTColors.surfaceVariant,
+                  foregroundColor: HTColors.textPrimary,
+                  side: const BorderSide(color: HTColors.border),
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  textStyle: HTTypography.listTitle,
+                ),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  appState.goToSettings(returnTo: AppScreen.gameplay);
                 },
               ),
               

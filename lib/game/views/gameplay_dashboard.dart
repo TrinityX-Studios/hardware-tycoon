@@ -15,6 +15,7 @@ import 'components/panels/workforce_router_panel.dart';
 import 'components/panels/rnd_lab_panel.dart';
 import 'components/panels/foundry_ops_panel.dart';
 import 'components/panels/design_init_panel.dart';
+import 'components/panels/music_deck_panel.dart';
 import '../models/silicon_project.dart';
 import '../managers/audio_manager.dart';
 
@@ -27,8 +28,14 @@ class GameplayDashboard extends StatefulWidget {
 }
 
 class _GameplayDashboardState extends State<GameplayDashboard> {
-  final List<String> _windowOrder = ['design_init', 'workforce', 'rnd', 'foundry'];
-  final Set<String> _closedWindows = {'design_init'};
+  final List<String> _windowOrder = [
+    'design_init',
+    'workforce',
+    'rnd',
+    'foundry',
+    'music_deck',
+  ];
+  final Set<String> _closedWindows = {'design_init', 'music_deck'};
   bool _isAssistedCompliance = false;
 
   // Silicon Breadboard Layout State
@@ -94,12 +101,20 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
     );
 
     // Setup traces connecting Reg Bus Pin to ALU Input Pin
-    final regPin = reg.gridPosition + reg.pins.firstWhere((p) => p.name == 'Bus Pin').offset; // (200, 68)
-    final aluInput = alu.gridPosition + alu.pins.firstWhere((p) => p.name == 'Input Pin').offset; // (160, 100)
+    final regPin =
+        reg.gridPosition +
+        reg.pins.firstWhere((p) => p.name == 'Bus Pin').offset; // (200, 68)
+    final aluInput =
+        alu.gridPosition +
+        alu.pins.firstWhere((p) => p.name == 'Input Pin').offset; // (160, 100)
 
     // Setup traces connecting Ctrl Out Pin to Decoder In Pin
-    final ctrlOut = ctrl.gridPosition + ctrl.pins.firstWhere((p) => p.name == 'Out Pin').offset; // (40, 80)
-    final decIn = dec.gridPosition + dec.pins.firstWhere((p) => p.name == 'In Pin').offset; // (60, 170)
+    final ctrlOut =
+        ctrl.gridPosition +
+        ctrl.pins.firstWhere((p) => p.name == 'Out Pin').offset; // (40, 80)
+    final decIn =
+        dec.gridPosition +
+        dec.pins.firstWhere((p) => p.name == 'In Pin').offset; // (60, 170)
 
     setState(() {
       _placedComponents = [alu, reg, ctrl, dec, mem];
@@ -115,11 +130,17 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
     for (final trace in _traces) {
       final topDistStart = (trace.start.dy - bus.gridPosition.dy).abs();
       final topDistEnd = (trace.end.dy - bus.gridPosition.dy).abs();
-      final bottomDistStart = (trace.start.dy - (bus.gridPosition.dy + bus.gridSize.height)).abs();
-      final bottomDistEnd = (trace.end.dy - (bus.gridPosition.dy + bus.gridSize.height)).abs();
+      final bottomDistStart =
+          (trace.start.dy - (bus.gridPosition.dy + bus.gridSize.height)).abs();
+      final bottomDistEnd =
+          (trace.end.dy - (bus.gridPosition.dy + bus.gridSize.height)).abs();
 
-      final withinXStart = trace.start.dx >= bus.gridPosition.dx - 2.0 && trace.start.dx <= bus.gridPosition.dx + bus.gridSize.width + 2.0;
-      final withinXEnd = trace.end.dx >= bus.gridPosition.dx - 2.0 && trace.end.dx <= bus.gridPosition.dx + bus.gridSize.width + 2.0;
+      final withinXStart =
+          trace.start.dx >= bus.gridPosition.dx - 2.0 &&
+          trace.start.dx <= bus.gridPosition.dx + bus.gridSize.width + 2.0;
+      final withinXEnd =
+          trace.end.dx >= bus.gridPosition.dx - 2.0 &&
+          trace.end.dx <= bus.gridPosition.dx + bus.gridSize.width + 2.0;
 
       if (withinXStart && (topDistStart < 2.0 || bottomDistStart < 2.0)) {
         startPoints.add(trace.start);
@@ -173,25 +194,37 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
     if (state.currentDesigningProject?.scope == DesignScope.architecture) {
       return true;
     }
-    final alu = _placedComponents.where((c) => c.type.contains('ALU Core')).firstOrNull;
-    final reg = _placedComponents.where((c) => c.type.contains('Reg File')).firstOrNull;
-    final ctrl = _placedComponents.where((c) => c.type == 'Ctrl Unit').firstOrNull;
+    final alu = _placedComponents
+        .where((c) => c.type.contains('ALU Core'))
+        .firstOrNull;
+    final reg = _placedComponents
+        .where((c) => c.type.contains('Reg File'))
+        .firstOrNull;
+    final ctrl = _placedComponents
+        .where((c) => c.type == 'Ctrl Unit')
+        .firstOrNull;
     final dec = _placedComponents.where((c) => c.type == 'Decoder').firstOrNull;
 
     if (alu == null || reg == null || ctrl == null || dec == null) return false;
 
     // Check reg to alu connection
-    final regPin = reg.gridPosition + reg.pins.firstWhere((p) => p.name == 'Bus Pin').offset;
+    final regPin =
+        reg.gridPosition +
+        reg.pins.firstWhere((p) => p.name == 'Bus Pin').offset;
     final aluPins = alu.pins.map((p) => alu.gridPosition + p.offset).toList();
     bool regToAluWired = _areConnected(regPin, aluPins);
 
     // Check ctrl to decoder connection
-    final ctrlPins = ctrl.pins.map((p) => ctrl.gridPosition + p.offset).toList();
+    final ctrlPins = ctrl.pins
+        .map((p) => ctrl.gridPosition + p.offset)
+        .toList();
     final decPins = dec.pins.map((p) => dec.gridPosition + p.offset).toList();
     bool ctrlToDecWired = _areConnectedMultiple(ctrlPins, decPins);
 
     // Check Interconnect Bus connection limits (max 3 unique endpoints)
-    final buses = _placedComponents.where((c) => c.type == 'Interconnect Bus').toList();
+    final buses = _placedComponents
+        .where((c) => c.type == 'Interconnect Bus')
+        .toList();
     bool busLimitOk = true;
     for (final bus in buses) {
       final connectionsCount = _getBusConnectionsCount(bus);
@@ -290,16 +323,14 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
           Positioned.fill(
             child: Opacity(
               opacity: 0.2,
-              child: CustomPaint(
-                painter: _TerminalGridPainter(),
-              ),
+              child: CustomPaint(painter: _TerminalGridPainter()),
             ),
           ),
-          
+
           // Workspace Windows
           for (final id in _windowOrder)
             if (!_closedWindows.contains(id)) _buildWindow(id),
-            
+
           // Top Menu Bar (Pinned)
           Positioned(
             top: 0,
@@ -322,19 +353,30 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
                   children: [
                     Container(
                       color: HTColors.surfaceVariant,
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0,
+                        vertical: 12.0,
+                      ),
                       child: Row(
                         children: [
-                          const Icon(Icons.architecture, color: HTColors.primary),
+                          const Icon(
+                            Icons.architecture,
+                            color: HTColors.primary,
+                          ),
                           const SizedBox(width: 12.0),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('ARCHITECTURE DESIGN MODE', style: HTTypography.panelHeader),
+                              Text(
+                                'ARCHITECTURE DESIGN MODE',
+                                style: HTTypography.panelHeader,
+                              ),
                               const SizedBox(height: 2.0),
                               Text(
                                 '${state.currentDesigningProject?.type.name.toUpperCase()} | ${state.currentDesigningProject?.paradigm.name.toUpperCase()} : "${state.currentDesigningProject?.projectName ?? "UNKNOWN"}"',
-                                style: HTTypography.metricLabel.copyWith(color: HTColors.primary),
+                                style: HTTypography.metricLabel.copyWith(
+                                  color: HTColors.primary,
+                                ),
                               ),
                             ],
                           ),
@@ -343,28 +385,42 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
                             ElevatedButton.icon(
                               icon: const Icon(Icons.flash_on, size: 16.0),
                               label: Text(
-                                state.currentDesigningProject?.scope == DesignScope.architecture
+                                state.currentDesigningProject?.scope ==
+                                        DesignScope.architecture
                                     ? 'REGISTER ARCHITECTURE SPEC'
                                     : 'EXECUTE TAPEOUT',
                               ),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: isValid ? HTColors.primary : HTColors.border,
-                                foregroundColor: isValid ? HTColors.textOnPrimary : HTColors.textMuted,
-                                textStyle: const TextStyle(fontFamily: 'IBMPlexMono', fontWeight: FontWeight.bold),
+                                backgroundColor: isValid
+                                    ? HTColors.primary
+                                    : HTColors.border,
+                                foregroundColor: isValid
+                                    ? HTColors.textOnPrimary
+                                    : HTColors.textMuted,
+                                textStyle: const TextStyle(
+                                  fontFamily: 'IBMPlexMono',
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               onPressed: isValid
                                   ? () {
-                                      AudioManager.instance.playSFX('audio/sounds/success.wav');
-                                      final proj = state.currentDesigningProject!;
+                                      AudioManager.instance.playSFX(
+                                        'audio/sounds/success.wav',
+                                      );
+                                      final proj =
+                                          state.currentDesigningProject!;
                                       state.tapeoutProject(proj);
                                       setState(() {
                                         _placedComponents = [];
                                         _traces = [];
                                       });
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
                                         SnackBar(
                                           content: Text(
-                                            proj.scope == DesignScope.architecture
+                                            proj.scope ==
+                                                    DesignScope.architecture
                                                 ? 'SPECIFICATION REGISTERED: ${proj.projectName} SYSTEM SPEC COMPLIANT.'
                                                 : 'TAPEOUT REGISTERED: ${proj.projectName} SYSTEM INITIALIZED.',
                                           ),
@@ -373,8 +429,12 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
                                       );
                                     }
                                   : () {
-                                      AudioManager.instance.playSFX('audio/sounds/error.wav');
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      AudioManager.instance.playSFX(
+                                        'audio/sounds/error.wav',
+                                      );
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
                                         const SnackBar(
                                           content: Text(
                                             '[PANIC] ADVISORY BLOCK: Resolve critical hardware verification failures before tapeout.',
@@ -386,16 +446,28 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
                             ),
                             const SizedBox(width: 8.0),
                             OutlinedButton.icon(
-                              icon: const Icon(Icons.download, size: 16.0, color: Color(0xFF22D3EE)),
+                              icon: const Icon(
+                                Icons.download,
+                                size: 16.0,
+                                color: Color(0xFF22D3EE),
+                              ),
                               label: const Text('EXPORT BLUEPRINT'),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: const Color(0xFF22D3EE),
-                                side: const BorderSide(color: Color(0xFF22D3EE)),
-                                textStyle: const TextStyle(fontFamily: 'IBMPlexMono', fontWeight: FontWeight.bold),
+                                side: const BorderSide(
+                                  color: Color(0xFF22D3EE),
+                                ),
+                                textStyle: const TextStyle(
+                                  fontFamily: 'IBMPlexMono',
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               onPressed: isValid
                                   ? () {
-                                      _showExportBlueprintDialog(context, state);
+                                      _showExportBlueprintDialog(
+                                        context,
+                                        state,
+                                      );
                                     }
                                   : null,
                             ),
@@ -407,7 +479,9 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
                             style: OutlinedButton.styleFrom(
                               foregroundColor: HTColors.error,
                               side: const BorderSide(color: HTColors.error),
-                              textStyle: const TextStyle(fontFamily: 'IBMPlexMono'),
+                              textStyle: const TextStyle(
+                                fontFamily: 'IBMPlexMono',
+                              ),
                             ),
                             onPressed: () {
                               state.cancelDesigningProject();
@@ -443,7 +517,10 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
                             width: 330.0,
                             decoration: const BoxDecoration(
                               border: Border(
-                                left: BorderSide(color: HTColors.border, width: 1.0),
+                                left: BorderSide(
+                                  color: HTColors.border,
+                                  width: 1.0,
+                                ),
                               ),
                               color: HTColors.surface,
                             ),
@@ -453,7 +530,10 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
                               children: [
                                 _buildMetricsCard(state),
                                 const SizedBox(height: 12.0),
-                                Text('PLACEMENT ROUTINES', style: HTTypography.metricLabel),
+                                Text(
+                                  'PLACEMENT ROUTINES',
+                                  style: HTTypography.metricLabel,
+                                ),
                                 const SizedBox(height: 6.0),
                                 _buildPlacementOptionButton(
                                   label: 'MANUAL COMPONENT PLACEMENT',
@@ -502,7 +582,7 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
 
   Widget _buildWindow(String id) {
     final isFocused = _windowOrder.isNotEmpty && _windowOrder.last == id;
-    
+
     switch (id) {
       case 'design_init':
         return DraggableWindow(
@@ -552,6 +632,18 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
           onClose: () => _closeWindow(id),
           child: const FoundryOpsPanel(),
         );
+      case 'music_deck':
+        return DraggableWindow(
+          key: const ValueKey('music_deck'),
+          title: 'CORE MUSIC DECK',
+          icon: Icons.music_note,
+          initialPosition: const Offset(820, 80),
+          initialSize: const Size(320, 390),
+          isFocused: isFocused,
+          onFocus: () => _bringToFront(id),
+          onClose: () => _closeWindow(id),
+          child: const MusicDeckPanel(),
+        );
       default:
         return const SizedBox.shrink();
     }
@@ -564,7 +656,7 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
     double complexity = 100.0;
     if (proj.type == ChipTarget.gpu) complexity = 250.0;
     if (proj.type == ChipTarget.fpga) complexity = 450.0;
-    
+
     if (proj.scope == DesignScope.coreUnit) complexity *= 2.0;
     if (proj.scope == DesignScope.productLiteral) complexity *= 4.0;
 
@@ -578,16 +670,25 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
     final targetFlops = (complexity * moodModifier) * pinMultiplier;
 
     // Total traces length calculation for impedance penalty
-    double totalTraceLength = _traces.fold(0.0, (sum, trace) => sum + (trace.end.dx - trace.start.dx).abs() + (trace.end.dy - trace.start.dy).abs());
+    double totalTraceLength = _traces.fold(
+      0.0,
+      (sum, trace) =>
+          sum +
+          (trace.end.dx - trace.start.dx).abs() +
+          (trace.end.dy - trace.start.dy).abs(),
+    );
     double impedanceFactor = 1.0;
     if (totalTraceLength > 600.0) {
-      impedanceFactor = (1.0 - (totalTraceLength - 600.0) / 1500.0).clamp(0.65, 1.0);
+      impedanceFactor = (1.0 - (totalTraceLength - 600.0) / 1500.0).clamp(
+        0.65,
+        1.0,
+      );
     }
 
     final year = state.gameDate.year;
     String unit = 'KiloFLOPS';
     double scaledValue = targetFlops * impedanceFactor;
-    
+
     if (year < 1980) {
       unit = 'KiloFLOPS';
       scaledValue = targetFlops * 1.5 * impedanceFactor;
@@ -612,27 +713,39 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
             children: [
               const Icon(Icons.analytics, size: 14.0, color: HTColors.primary),
               const SizedBox(width: 6.0),
-              Text('ARCHITECTURE PROJECTION', style: HTTypography.panelHeader.copyWith(fontSize: 10.0)),
+              Text(
+                'ARCHITECTURE PROJECTION',
+                style: HTTypography.panelHeader.copyWith(fontSize: 10.0),
+              ),
             ],
           ),
           const SizedBox(height: 12.0),
-          
+
           _buildMetricRow('COMPLEXITY', '${complexity.toStringAsFixed(0)} pts'),
           const SizedBox(height: 6.0),
-          _buildMetricRow('MOOD MODIFIER', '×${moodModifier.toStringAsFixed(2)}'),
+          _buildMetricRow(
+            'MOOD MODIFIER',
+            '×${moodModifier.toStringAsFixed(2)}',
+          ),
           const SizedBox(height: 6.0),
-          _buildMetricRow('PIN DENSITY MULT', '×${pinMultiplier.toStringAsFixed(1)}'),
-          
+          _buildMetricRow(
+            'PIN DENSITY MULT',
+            '×${pinMultiplier.toStringAsFixed(1)}',
+          ),
+
           if (impedanceFactor < 1.0) ...[
             const SizedBox(height: 6.0),
-            _buildMetricRow('IMPEDANCE MULT', '×${impedanceFactor.toStringAsFixed(2)}'),
+            _buildMetricRow(
+              'IMPEDANCE MULT',
+              '×${impedanceFactor.toStringAsFixed(2)}',
+            ),
           ],
-          
+
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0),
             child: Divider(color: HTColors.border, height: 1.0),
           ),
-          
+
           Text('ESTIMATED PERFORMANCE', style: HTTypography.metricLabel),
           const SizedBox(height: 4.0),
           Row(
@@ -669,7 +782,13 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label, style: HTTypography.metricLabel.copyWith(fontSize: 8.5)),
-        Text(value, style: HTTypography.badge.copyWith(color: HTColors.textPrimary, fontSize: 8.5)),
+        Text(
+          value,
+          style: HTTypography.badge.copyWith(
+            color: HTColors.textPrimary,
+            fontSize: 8.5,
+          ),
+        ),
       ],
     );
   }
@@ -685,7 +804,9 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
         decoration: BoxDecoration(
-          color: isActive ? HTColors.primary.withValues(alpha: 0.15) : HTColors.surface,
+          color: isActive
+              ? HTColors.primary.withValues(alpha: 0.15)
+              : HTColors.surface,
           border: Border.all(
             color: isActive ? HTColors.primary : HTColors.border,
             width: isActive ? 1.5 : 1.0,
@@ -694,21 +815,31 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
         ),
         child: Row(
           children: [
-            Icon(icon, size: 14.0, color: isActive ? HTColors.primary : HTColors.textSecondary),
+            Icon(
+              icon,
+              size: 14.0,
+              color: isActive ? HTColors.primary : HTColors.textSecondary,
+            ),
             const SizedBox(width: 8.0),
             Expanded(
               child: Text(
                 label,
                 style: TextStyle(
                   fontFamily: 'IBMPlexMono',
-                  color: isActive ? HTColors.textPrimary : HTColors.textSecondary,
+                  color: isActive
+                      ? HTColors.textPrimary
+                      : HTColors.textSecondary,
                   fontSize: 8.5,
                   fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
             ),
             if (isActive)
-              const Icon(Icons.check_circle, size: 10.0, color: HTColors.primary),
+              const Icon(
+                Icons.check_circle,
+                size: 10.0,
+                color: HTColors.primary,
+              ),
           ],
         ),
       ),
@@ -716,9 +847,15 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
   }
 
   Widget _buildVerificationConsole() {
-    final alu = _placedComponents.where((c) => c.type.contains('ALU Core')).firstOrNull;
-    final reg = _placedComponents.where((c) => c.type.contains('Reg File')).firstOrNull;
-    final ctrl = _placedComponents.where((c) => c.type == 'Ctrl Unit').firstOrNull;
+    final alu = _placedComponents
+        .where((c) => c.type.contains('ALU Core'))
+        .firstOrNull;
+    final reg = _placedComponents
+        .where((c) => c.type.contains('Reg File'))
+        .firstOrNull;
+    final ctrl = _placedComponents
+        .where((c) => c.type == 'Ctrl Unit')
+        .firstOrNull;
     final dec = _placedComponents.where((c) => c.type == 'Decoder').firstOrNull;
 
     bool aluOk = alu != null;
@@ -729,7 +866,9 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
     // Check reg to alu connection
     bool regToAluWired = false;
     if (alu != null && reg != null) {
-      final regPin = reg.gridPosition + reg.pins.firstWhere((p) => p.name == 'Bus Pin').offset;
+      final regPin =
+          reg.gridPosition +
+          reg.pins.firstWhere((p) => p.name == 'Bus Pin').offset;
       final aluPins = alu.pins.map((p) => alu.gridPosition + p.offset).toList();
       regToAluWired = _areConnected(regPin, aluPins);
     }
@@ -737,31 +876,50 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
     // Check ctrl to decoder connection
     bool ctrlToDecWired = false;
     if (ctrl != null && dec != null) {
-      final ctrlPins = ctrl.pins.map((p) => ctrl.gridPosition + p.offset).toList();
+      final ctrlPins = ctrl.pins
+          .map((p) => ctrl.gridPosition + p.offset)
+          .toList();
       final decPins = dec.pins.map((p) => dec.gridPosition + p.offset).toList();
       ctrlToDecWired = _areConnectedMultiple(ctrlPins, decPins);
     }
 
     // Total traces length calculation
-    double totalTraceLength = _traces.fold(0.0, (sum, trace) => sum + (trace.end.dx - trace.start.dx).abs() + (trace.end.dy - trace.start.dy).abs());
+    double totalTraceLength = _traces.fold(
+      0.0,
+      (sum, trace) =>
+          sum +
+          (trace.end.dx - trace.start.dx).abs() +
+          (trace.end.dy - trace.start.dy).abs(),
+    );
     bool highImpedance = totalTraceLength > 600.0;
 
     // Check Interconnect Bus connection limits (max 3 unique endpoints)
-    final buses = _placedComponents.where((c) => c.type == 'Interconnect Bus').toList();
+    final buses = _placedComponents
+        .where((c) => c.type == 'Interconnect Bus')
+        .toList();
     bool busLimitOk = true;
     String? busStatusMessage;
-    
+
     for (final bus in buses) {
       final count = _getBusConnectionsCount(bus);
       if (count > 3) {
         busLimitOk = false;
-        busStatusMessage = '[ERR] BUS CAPACITY CEILING: Current Interconnect Bus multiplexer cannot route more than 3 system endpoints. Advance Bus R&D.';
+        busStatusMessage =
+            '[ERR] BUS CAPACITY CEILING: Current Interconnect Bus multiplexer cannot route more than 3 system endpoints. Advance Bus R&D.';
       } else {
-        busStatusMessage = '[PASS] BUS CAPACITY: Interconnect Bus multiplexer routing ($count/3 endpoints) is stable.';
+        busStatusMessage =
+            '[PASS] BUS CAPACITY: Interconnect Bus multiplexer routing ($count/3 endpoints) is stable.';
       }
     }
 
-    bool isValid = aluOk && regOk && ctrlOk && decOk && regToAluWired && ctrlToDecWired && busLimitOk;
+    bool isValid =
+        aluOk &&
+        regOk &&
+        ctrlOk &&
+        decOk &&
+        regToAluWired &&
+        ctrlToDecWired &&
+        busLimitOk;
 
     return Container(
       padding: const EdgeInsets.all(12.0),
@@ -777,16 +935,24 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
             children: [
               const Icon(Icons.terminal, size: 12.0, color: HTColors.primary),
               const SizedBox(width: 6.0),
-              Text('ENGINEERING ADVISORY CONSOLE', style: HTTypography.panelHeader.copyWith(fontSize: 9.0)),
+              Text(
+                'ENGINEERING ADVISORY CONSOLE',
+                style: HTTypography.panelHeader.copyWith(fontSize: 9.0),
+              ),
             ],
           ),
           const SizedBox(height: 8.0),
           const Text(
             '[?] HARDWARE VERIFICATION PROTOCOL:',
-            style: TextStyle(fontFamily: 'IBMPlexMono', fontSize: 8.0, color: HTColors.textSecondary, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontFamily: 'IBMPlexMono',
+              fontSize: 8.0,
+              color: HTColors.textSecondary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 6.0),
-          
+
           // 1. Core unit compliance log lines
           _buildConsoleLine(
             isPass: aluOk,
@@ -808,7 +974,7 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
             passText: 'Decoder block detected at G-Grid coordinates.',
             failText: 'Decoder block is missing from grid layout.',
           ),
-          
+
           const SizedBox(height: 4.0),
 
           // 2. Data bus linkage
@@ -841,7 +1007,11 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
             const SizedBox(height: 4.0),
             Text(
               '[WARN] HIGH IMPEDANCE: Signal propagation path between core blocks is too long (${totalTraceLength.toInt()} units). Reducing base clock target.',
-              style: const TextStyle(fontFamily: 'IBMPlexMono', fontSize: 7.5, color: Color(0xFFFBBF24)),
+              style: const TextStyle(
+                fontFamily: 'IBMPlexMono',
+                fontSize: 7.5,
+                color: Color(0xFFFBBF24),
+              ),
             ),
           ],
 
@@ -866,7 +1036,10 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
     );
   }
 
-  void _showExportBlueprintDialog(BuildContext context, GameStateNotifier state) {
+  void _showExportBlueprintDialog(
+    BuildContext context,
+    GameStateNotifier state,
+  ) {
     String bpName = 'LAYOUT_${state.playerVerifiedLayouts.length + 1}';
     showDialog(
       context: context,
@@ -911,12 +1084,22 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
                     decoration: const InputDecoration(
                       filled: true,
                       fillColor: HTColors.surface,
-                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: HTColors.border)),
-                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Color(0xFF22D3EE))),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: HTColors.border),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF22D3EE)),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 10.0,
+                        vertical: 8.0,
+                      ),
                     ),
                     onChanged: (val) => bpName = val,
-                    controller: TextEditingController(text: bpName)..selection = TextSelection.collapsed(offset: bpName.length),
+                    controller: TextEditingController(text: bpName)
+                      ..selection = TextSelection.collapsed(
+                        offset: bpName.length,
+                      ),
                   ),
                 ],
               ),
@@ -927,7 +1110,10 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
                     foregroundColor: HTColors.textSecondary,
                     side: const BorderSide(color: HTColors.border),
                   ),
-                  child: const Text('CANCEL', style: TextStyle(fontFamily: 'IBMPlexMono', fontSize: 10)),
+                  child: const Text(
+                    'CANCEL',
+                    style: TextStyle(fontFamily: 'IBMPlexMono', fontSize: 10),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -938,20 +1124,36 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
                       if (proj != null) {
                         if (proj.type == ChipTarget.gpu) complexity = 250.0;
                         if (proj.type == ChipTarget.fpga) complexity = 450.0;
-                        if (proj.scope == DesignScope.coreUnit) complexity *= 2.0;
-                        if (proj.scope == DesignScope.productLiteral) complexity *= 4.0;
+                        if (proj.scope == DesignScope.coreUnit) {
+                          complexity *= 2.0;
+                        }
+                        if (proj.scope == DesignScope.productLiteral) {
+                          complexity *= 4.0;
+                        }
                       }
-                      
+
                       final moodModifier = 0.5 + 0.5 * state.corporateMood;
-                      double totalTraceLength = _traces.fold(0.0, (sum, trace) => sum + (trace.end.dx - trace.start.dx).abs() + (trace.end.dy - trace.start.dy).abs());
+                      double totalTraceLength = _traces.fold(
+                        0.0,
+                        (sum, trace) =>
+                            sum +
+                            (trace.end.dx - trace.start.dx).abs() +
+                            (trace.end.dy - trace.start.dy).abs(),
+                      );
                       double impedanceFactor = totalTraceLength > 600.0
-                          ? (1.0 - (totalTraceLength - 600.0) / 1500.0).clamp(0.65, 1.0)
+                          ? (1.0 - (totalTraceLength - 600.0) / 1500.0).clamp(
+                              0.65,
+                              1.0,
+                            )
                           : 1.0;
-                      double layoutFlops = (complexity * moodModifier * 1.5) * impedanceFactor;
-                      
+                      double layoutFlops =
+                          (complexity * moodModifier * 1.5) * impedanceFactor;
+
                       final layout = CustomDieLayout(
                         name: cleanName,
-                        components: List<PlacedComponent>.from(_placedComponents),
+                        components: List<PlacedComponent>.from(
+                          _placedComponents,
+                        ),
                         traces: List<LineTrace>.from(_traces),
                         kiloFlops: layoutFlops,
                         gateComplexity: complexity.toInt(),
@@ -961,7 +1163,9 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
                       Navigator.of(ctx).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('BLUEPRINT SCHEMA "$cleanName" EXPORTED TO SIMULATION REGISTRY.'),
+                          content: Text(
+                            'BLUEPRINT SCHEMA "$cleanName" EXPORTED TO SIMULATION REGISTRY.',
+                          ),
                           backgroundColor: HTColors.success,
                         ),
                       );
@@ -971,7 +1175,14 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
                     backgroundColor: const Color(0xFF22D3EE),
                     foregroundColor: const Color(0xFF020617),
                   ),
-                  child: const Text('EXPORT', style: TextStyle(fontFamily: 'IBMPlexMono', fontWeight: FontWeight.bold, fontSize: 10)),
+                  child: const Text(
+                    'EXPORT',
+                    style: TextStyle(
+                      fontFamily: 'IBMPlexMono',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 10,
+                    ),
+                  ),
                 ),
               ],
             );

@@ -10,6 +10,7 @@ import 'game/views/setup_view.dart';
 import 'game/views/session_slots_view.dart';
 import 'game/views/settings_view.dart';
 import 'game/views/about_and_credits.dart';
+import 'game/managers/audio_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +44,8 @@ class _HardwareTycoonAppState extends State<HardwareTycoonApp> {
   void initState() {
     super.initState();
     _appState = AppStateMachine();
+    // Start background music
+    AudioManager.instance.playBGM('audio/music/Laser_Groove.mp3');
   }
 
   @override
