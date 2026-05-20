@@ -268,11 +268,9 @@ class GameStateNotifier extends ChangeNotifier {
       ihs: project.ihs,
       customLayoutName: project.customLayoutName,
       parentArchitectureName: project.parentArchitectureName,
-      hasFpu: project.hasFpu,
-      hasMmx: project.hasMmx,
-      hasSse: project.hasSse,
-      hasDsp: project.hasDsp,
-      hasCustomIsa: project.hasCustomIsa,
+      enabledExtensions: Map<String, bool>.from(project.enabledExtensions),
+      cacheAllocation: project.cacheAllocation,
+      maxExtDramCapacity: project.maxExtDramCapacity,
     );
 
     if (updated.scope == DesignScope.architecture) {
@@ -440,7 +438,14 @@ class GameStateNotifier extends ChangeNotifier {
     final otherStaffCost = otherStaffCount * 45.0;
     final rndLabOverhead = 200.0 * (_rndFunding.upkeepMult - 1.0);
     
-    final dailyCost = _config.baseOperatingCost + rndStaffCost + otherStaffCost + rndLabOverhead;
+    double compilerExpenses = 0.0;
+    for (final arch in _savedArchitectures) {
+      if (arch.enabledExtensions['vliw_layout'] == true) {
+        compilerExpenses += 50.0;
+      }
+    }
+    
+    final dailyCost = _config.baseOperatingCost + rndStaffCost + otherStaffCost + rndLabOverhead + compilerExpenses;
     
     _netCashflow = dailyRevenue - dailyCost;
     _liquidity += _netCashflow;

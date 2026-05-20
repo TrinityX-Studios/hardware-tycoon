@@ -169,6 +169,10 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
 
   // Flood fill copper path search checking if two nodes connect via traces
   bool _isLayoutValid() {
+    final state = GameStateProvider.of(context);
+    if (state.currentDesigningProject?.scope == DesignScope.architecture) {
+      return true;
+    }
     final alu = _placedComponents.where((c) => c.type.contains('ALU Core')).firstOrNull;
     final reg = _placedComponents.where((c) => c.type.contains('Reg File')).firstOrNull;
     final ctrl = _placedComponents.where((c) => c.type == 'Ctrl Unit').firstOrNull;

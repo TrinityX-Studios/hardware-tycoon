@@ -56,6 +56,14 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
   CacheAllocation _selectedCache = CacheAllocation.none;
   ExtDramCapacity _selectedDram = ExtDramCapacity.none;
 
+  final Map<String, bool> _enabledExtensions = {
+    'basic_alu': true,
+    'hardware_mul_div': false,
+    'bcd_math': false,
+    'cisc_layout': true,
+    'vliw_layout': false,
+  };
+
   @override
   void initState() {
     super.initState();
@@ -250,6 +258,13 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
     if (_hasCustomIsa && isCustomIsaUnlocked) checkboxPerfMult += 0.15;
     if (_hasFpu && isFpuUnlocked) checkboxPerfMult += 0.25;
     if (_hasDsp && isDspUnlocked) checkboxPerfMult += 0.30;
+
+    // 1960s dynamic extension multipliers
+    if (_enabledExtensions['hardware_mul_div'] == true) checkboxPerfMult += 0.30;
+    if (_enabledExtensions['bcd_math'] == true) checkboxPerfMult += 0.15;
+    if (_enabledExtensions['cisc_layout'] == true) checkboxPerfMult += 0.25;
+    if (_enabledExtensions['vliw_layout'] == true) checkboxPerfMult += 0.20;
+
     projectedFlops *= checkboxPerfMult;
     
     // Apply Cache allocation multiplier to FLOPS/IPC
@@ -289,6 +304,12 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
     if (_hasCustomIsa && isCustomIsaUnlocked) featureCapBonus -= 0.10; // Architecture optimization
     if (_hasFpu && isFpuUnlocked) featureCapBonus += 0.05;
     if (_hasDsp && isDspUnlocked) featureCapBonus += 0.12;
+
+    // 1960s dynamic extension capacitance
+    if (_enabledExtensions['hardware_mul_div'] == true) featureCapBonus += 0.10;
+    if (_enabledExtensions['bcd_math'] == true) featureCapBonus += 0.05;
+    if (_enabledExtensions['cisc_layout'] == true) featureCapBonus += 0.20;
+    // Explicit Parallelism (VLIW) offloads logic to software compilers, keeping physical silicon cold (0W overhead)
 
     double powerWatts = capFactor * voltageFactorSq * frequencyFactor * featureCapBonus * thermalDissipationMult;
     
@@ -345,6 +366,12 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
     if (_hasCustomIsa && isCustomIsaUnlocked) tapeoutCost += 18000.0;
     if (_hasFpu && isFpuUnlocked) tapeoutCost += 15000.0;
     if (_hasDsp && isDspUnlocked) tapeoutCost += 22000.0;
+
+    // 1960s dynamic extension tapeout cost
+    if (_enabledExtensions['hardware_mul_div'] == true) tapeoutCost += 8000.0;
+    if (_enabledExtensions['bcd_math'] == true) tapeoutCost += 5000.0;
+    if (_enabledExtensions['cisc_layout'] == true) tapeoutCost += 10000.0;
+    if (_enabledExtensions['vliw_layout'] == true) tapeoutCost += 12000.0;
 
     if (_selectedParadigm == LicensingModel.ipLicensing) tapeoutCost *= 1.5;
     if (_isRefresh) tapeoutCost *= 0.40;
@@ -447,7 +474,7 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
                       child: const Text('NEXT PHASE', style: TextStyle(fontFamily: 'IBMPlexMono', fontWeight: FontWeight.bold, fontSize: 9)),
                     )
                   else
-                    // INITIALIZE TAPE OUT (Phase 4 final trigger)
+                    // INITIALIZE TAPE OUT / COMPILE ARCHITECTURE SPEC
                     ElevatedButton(
                       onPressed: !canInitialize
                           ? null
@@ -471,15 +498,33 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
                                 projectedYieldPct: projectedYield,
                                 tapeoutCostTicks: tapeoutCost,
                                 parentArchitectureName: _selectedParentArchitectureName,
-                                hasFpu: _hasFpu,
-                                hasMmx: _hasMmx,
-                                hasSse: _hasSse,
-                                hasDsp: _hasDsp,
-                                hasCustomIsa: _hasCustomIsa,
+                                enabledExtensions: {
+                                  'fpu': _hasFpu,
+                                  'mmx': _hasMmx,
+                                  'sse': _hasSse,
+                                  'dsp': _hasDsp,
+                                  'custom_isa': _hasCustomIsa,
+                                  'basic_alu': _enabledExtensions['basic_alu'] ?? true,
+                                  'hardware_mul_div': _enabledExtensions['hardware_mul_div'] ?? false,
+                                  'bcd_math': _enabledExtensions['bcd_math'] ?? false,
+                                  'cisc_layout': _enabledExtensions['cisc_layout'] ?? true,
+                                  'vliw_layout': _enabledExtensions['vliw_layout'] ?? false,
+                                },
                                 cacheAllocation: _selectedCache,
                                 maxExtDramCapacity: _selectedDram,
                               );
-                              state.startDesigningProject(project);
+                              if (project.scope == DesignScope.architecture) {
+                                state.tapeoutProject(project);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('SPECIFICATION REGISTERED: ${project.projectName} SYSTEM SPEC COMPLIANT.'),
+                                    backgroundColor: HTColors.success,
+                                  ),
+                                );
+                                AudioManager.instance.playSFX('audio/sounds/success.wav');
+                              } else {
+                                state.startDesigningProject(project);
+                              }
                               setState(() => _currentStep = 0); // reset
                               widget.onClose();
                             },
@@ -488,7 +533,12 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
                         foregroundColor: HTColors.textOnPrimary,
                         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                       ),
-                      child: const Text('INITIALIZE DESIGN', style: TextStyle(fontFamily: 'IBMPlexMono', fontWeight: FontWeight.bold, fontSize: 9)),
+                      child: Text(
+                        _selectedScope == DesignScope.architecture
+                            ? 'COMPILE ARCHITECTURE SPEC'
+                            : 'INITIALIZE DESIGN',
+                        style: const TextStyle(fontFamily: 'IBMPlexMono', fontWeight: FontWeight.bold, fontSize: 9),
+                      ),
                     ),
                 ],
               ),
@@ -588,9 +638,22 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
                                         _hasSse = firstArch.hasSse;
                                         _hasDsp = firstArch.hasDsp;
                                         _hasCustomIsa = firstArch.hasCustomIsa;
+                                        _enabledExtensions.clear();
+                                        _enabledExtensions.addAll(firstArch.enabledExtensions);
                                       }
                                     } else {
                                       _selectedParentArchitectureName = null;
+                                      if (scope == DesignScope.architecture) {
+                                        _selectedBitWidth = BitWidth.bit8;
+                                        _enabledExtensions.clear();
+                                        _enabledExtensions.addAll({
+                                          'basic_alu': true,
+                                          'hardware_mul_div': false,
+                                          'bcd_math': false,
+                                          'cisc_layout': true,
+                                          'vliw_layout': false,
+                                        });
+                                      }
                                     }
                                   }),
                           child: Container(
@@ -690,6 +753,8 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
                     _hasSse = parentIsa.hasSse;
                     _hasDsp = parentIsa.hasDsp;
                     _hasCustomIsa = parentIsa.hasCustomIsa;
+                    _enabledExtensions.clear();
+                    _enabledExtensions.addAll(parentIsa.enabledExtensions);
                   }
                 });
               },
@@ -829,6 +894,161 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
 
   // PHASE 2: Architectural Flags & Instruction Checklist View
   Widget _buildPhase2Architecture(GameStateNotifier state, int year) {
+    if (_selectedScope == DesignScope.architecture) {
+      final is16BitUnlocked = state.isNodeUnlocked('arch_16bit');
+      final isBitWidthLocked = _selectedBitWidth == BitWidth.bit16 && !is16BitUnlocked;
+
+      return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildSubsectionHeader('PHASE 2: 1960s ARCHITECTURAL SPEC SHEET'),
+            const SizedBox(height: 12.0),
+
+            // 1. Bit-Width Configuration
+            Text('1. BIT-WIDTH CONFIGURATION', style: HTTypography.metricLabel),
+            const SizedBox(height: 6.0),
+            Container(
+              decoration: HTDecorations.panelBox(),
+              child: Column(
+                children: [
+                  RadioListTile<BitWidth>(
+                    title: const Text('8-Bit Data Word', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 10)),
+                    subtitle: const Text('Historical baseline standard.', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textSecondary, fontSize: 8)),
+                    value: BitWidth.bit8,
+                    groupValue: _selectedBitWidth,
+                    activeColor: HTColors.primary,
+                    dense: true,
+                    onChanged: (val) {
+                      if (val != null) {
+                        setState(() => _selectedBitWidth = val);
+                      }
+                    },
+                  ),
+                  const Divider(color: HTColors.border, height: 1.0),
+                  RadioListTile<BitWidth>(
+                    title: const Text('16-Bit Data Word', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 10)),
+                    subtitle: Text(
+                      is16BitUnlocked 
+                          ? 'Late-60s premium compute throughput; adds transistor density (+150% FLOPS, +200% die area).' 
+                          : '[ LOCKED: REQUIRES 16-BIT ARCHITECTURE R&D ]',
+                      style: TextStyle(fontFamily: 'IBMPlexMono', color: is16BitUnlocked ? HTColors.textSecondary : Colors.redAccent, fontSize: 8),
+                    ),
+                    value: BitWidth.bit16,
+                    groupValue: _selectedBitWidth,
+                    activeColor: HTColors.primary,
+                    dense: true,
+                    onChanged: is16BitUnlocked
+                        ? (val) {
+                            if (val != null) {
+                              setState(() => _selectedBitWidth = val);
+                            }
+                          }
+                        : null,
+                  ),
+                ],
+              ),
+            ),
+            if (isBitWidthLocked) ...[
+              const SizedBox(height: 6.0),
+              _buildWarningMessage(
+                '[!] SELECTED BIT WIDTH IS LOCKED: REQUIRES 16-BIT ARCHITECTURE R&D.',
+                HTColors.error,
+              ),
+            ],
+            const SizedBox(height: 16.0),
+
+            // 2. Execution Logic & ALU Flags
+            Text('2. EXECUTION LOGIC & ALU FLAGS', style: HTTypography.metricLabel),
+            const SizedBox(height: 6.0),
+            Container(
+              decoration: HTDecorations.panelBox(),
+              child: Column(
+                children: [
+                  CheckboxListTile(
+                    title: const Text('Basic Integer ALU', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 10)),
+                    subtitle: const Text('Baseline execution (Add, Subtract, AND, OR, XOR). Always enabled.', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textSecondary, fontSize: 8)),
+                    value: true,
+                    enabled: false,
+                    activeColor: HTColors.primary,
+                    dense: true,
+                    onChanged: null,
+                  ),
+                  const Divider(color: HTColors.border, height: 1.0),
+                  CheckboxListTile(
+                    title: const Text('Hardware Multiply/Divide', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 10)),
+                    subtitle: const Text('Increases performance by avoiding software loops. (+30% FLOPS, +10% capacitance, +\$8k cost)', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textSecondary, fontSize: 8)),
+                    value: _enabledExtensions['hardware_mul_div'] ?? false,
+                    activeColor: HTColors.primary,
+                    dense: true,
+                    onChanged: (val) {
+                      setState(() {
+                        _enabledExtensions['hardware_mul_div'] = val ?? false;
+                      });
+                    },
+                  ),
+                  const Divider(color: HTColors.border, height: 1.0),
+                  CheckboxListTile(
+                    title: const Text('Binary-Coded Decimal (BCD) Math', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 10)),
+                    subtitle: const Text('Exact decimal module for banking/enterprise. (+15% FLOPS, +5% capacitance, +\$5k cost)', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textSecondary, fontSize: 8)),
+                    value: _enabledExtensions['bcd_math'] ?? false,
+                    activeColor: HTColors.primary,
+                    dense: true,
+                    onChanged: (val) {
+                      setState(() {
+                        _enabledExtensions['bcd_math'] = val ?? false;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16.0),
+
+            // 3. Structural Architectural Philosophy
+            Text('3. STRUCTURAL ARCHITECTURAL PHILOSOPHY', style: HTTypography.metricLabel),
+            const SizedBox(height: 6.0),
+            Container(
+              decoration: HTDecorations.panelBox(),
+              child: Column(
+                children: [
+                  RadioListTile<String>(
+                    title: const Text('Microcoded CISC Layout', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 10)),
+                    subtitle: const Text('Native hardware decoder handling multi-cycle instructions. (+25% FLOPS, +20% thermal power, +\$10k cost)', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textSecondary, fontSize: 8)),
+                    value: 'cisc',
+                    groupValue: _enabledExtensions['cisc_layout'] == true ? 'cisc' : (_enabledExtensions['vliw_layout'] == true ? 'vliw' : null),
+                    activeColor: HTColors.primary,
+                    dense: true,
+                    onChanged: (val) {
+                      setState(() {
+                        _enabledExtensions['cisc_layout'] = true;
+                        _enabledExtensions['vliw_layout'] = false;
+                      });
+                    },
+                  ),
+                  const Divider(color: HTColors.border, height: 1.0),
+                  RadioListTile<String>(
+                    title: const Text('Explicit Parallelism / Early VLIW Alternative', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textPrimary, fontSize: 10)),
+                    subtitle: const Text('Complexity is offloaded to software compilers. Keeps physical silicon cold (0W overhead, 0% capacitance), but adds recurring R&D Compiler operating expenses (+\$50/day). (+20% FLOPS)', style: TextStyle(fontFamily: 'IBMPlexMono', color: HTColors.textSecondary, fontSize: 8)),
+                    value: 'vliw',
+                    groupValue: _enabledExtensions['cisc_layout'] == true ? 'cisc' : (_enabledExtensions['vliw_layout'] == true ? 'vliw' : null),
+                    activeColor: HTColors.primary,
+                    dense: true,
+                    onChanged: (val) {
+                      setState(() {
+                        _enabledExtensions['cisc_layout'] = false;
+                        _enabledExtensions['vliw_layout'] = true;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     final isMmxUnlocked = state.isNodeUnlocked('arch_pipeline');
     final isSseUnlocked = state.isNodeUnlocked('arch_32bit');
     final isCustomIsaUnlocked = state.isNodeUnlocked('arch_risc');

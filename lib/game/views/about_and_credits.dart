@@ -88,10 +88,12 @@ class AboutAndCreditsView extends StatelessWidget {
                             icon: Icons.gavel,
                             accentColor: HTColors.warning,
                             children: [
+                              _buildCrtLine('LICENSE', 'MIT License'),
+                              _buildCrtLine('REPOSITORY', 'https://github.com/TrinityX-Studios/hardware-tycoon'),
+                              const SizedBox(height: 12.0),
                               const Text(
-                                'This software is provided as-is for educational and '
-                                'entertainment purposes. All third-party assets are '
-                                'used under their respective licenses as credited below.',
+                                'This software is licensed under the permissive MIT License. '
+                                'The full source code is publicly accessible and reachable via GitHub.',
                                 style: TextStyle(
                                   fontFamily: 'IBMPlexMono',
                                   fontSize: 10.0,
@@ -99,7 +101,7 @@ class AboutAndCreditsView extends StatelessWidget {
                                   height: 1.5,
                                 ),
                               ),
-                              const SizedBox(height: 8.0),
+                              const SizedBox(height: 10.0),
                               Container(
                                 padding: const EdgeInsets.all(8.0),
                                 decoration: BoxDecoration(
@@ -107,15 +109,33 @@ class AboutAndCreditsView extends StatelessWidget {
                                   border: Border.all(color: HTColors.warning.withValues(alpha: 0.2)),
                                   borderRadius: BorderRadius.circular(3.0),
                                 ),
-                                child: const Text(
-                                  '[ ! ] All music tracks are licensed under Creative Commons. '
-                                  'Redistribution must comply with the original license terms.',
-                                  style: TextStyle(
-                                    fontFamily: 'IBMPlexMono',
-                                    fontSize: 9.0,
-                                    color: HTColors.warning,
-                                    height: 1.4,
-                                  ),
+                                child: const Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '[ ! ] AI DISCLAIMER: Various codebase features, user interface layout '
+                                      'structures, simulation processing engines, and custom synthesized WAV '
+                                      'audio assets were developed and compiled with the assistance of agentic '
+                                      'AI systems.',
+                                      style: TextStyle(
+                                        fontFamily: 'IBMPlexMono',
+                                        fontSize: 9.0,
+                                        color: HTColors.warning,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                    SizedBox(height: 6.0),
+                                    Text(
+                                      '[ ! ] All music tracks are licensed under Creative Commons. '
+                                      'Redistribution must comply with the original license terms.',
+                                      style: TextStyle(
+                                        fontFamily: 'IBMPlexMono',
+                                        fontSize: 9.0,
+                                        color: HTColors.warning,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],

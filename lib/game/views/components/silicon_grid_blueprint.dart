@@ -125,8 +125,7 @@ class _SiliconGridBlueprintState extends State<SiliconGridBlueprint> {
     final state = GameStateProvider.of(context);
     final currentProj = state.currentDesigningProject;
     final isEditable = currentProj != null &&
-        (currentProj.scope == DesignScope.architecture ||
-            currentProj.scope == DesignScope.coreUnit ||
+        (currentProj.scope == DesignScope.coreUnit ||
             currentProj.scope == DesignScope.productLiteral);
 
     // Dynamic layout boundary scales procedurally based on tech research parameter

@@ -159,13 +159,16 @@ class SiliconProject {
   final IhsMaterial ihs;
   final String? customLayoutName;
   final String? parentArchitectureName;
-  final bool hasFpu;
-  final bool hasMmx;
-  final bool hasSse;
-  final bool hasDsp;
-  final bool hasCustomIsa;
+  final Map<String, bool> enabledExtensions;
   final CacheAllocation cacheAllocation;
   final ExtDramCapacity maxExtDramCapacity;
+
+  bool get hasFpu => enabledExtensions['fpu'] ?? false;
+  bool get getHasFpu => hasFpu;
+  bool get hasMmx => enabledExtensions['mmx'] ?? false;
+  bool get hasSse => enabledExtensions['sse'] ?? false;
+  bool get hasDsp => enabledExtensions['dsp'] ?? false;
+  bool get hasCustomIsa => enabledExtensions['custom_isa'] ?? false;
 
   SiliconProject({
     required this.projectName,
@@ -187,14 +190,21 @@ class SiliconProject {
     this.ihs = IhsMaterial.none,
     this.customLayoutName,
     this.parentArchitectureName,
-    this.hasFpu = false,
-    this.hasMmx = false,
-    this.hasSse = false,
-    this.hasDsp = false,
-    this.hasCustomIsa = false,
+    bool hasFpu = false,
+    bool hasMmx = false,
+    bool hasSse = false,
+    bool hasDsp = false,
+    bool hasCustomIsa = false,
+    Map<String, bool>? enabledExtensions,
     this.cacheAllocation = CacheAllocation.none,
     this.maxExtDramCapacity = ExtDramCapacity.none,
-  }) {
+  }) : enabledExtensions = enabledExtensions ?? {
+          'fpu': hasFpu,
+          'mmx': hasMmx,
+          'sse': hasSse,
+          'dsp': hasDsp,
+          'custom_isa': hasCustomIsa,
+        } {
     if (type == ChipTarget.fpga) {
       final fpgaNode = HistoricalTechTree.nodes.firstWhere(
         (n) => n.id == 'arch_fpga',
