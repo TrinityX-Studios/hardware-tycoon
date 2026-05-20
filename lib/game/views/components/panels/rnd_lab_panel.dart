@@ -405,27 +405,34 @@ class _RndLabPanelState extends State<RndLabPanel> {
                                     _searchQuery.toLowerCase(),
                                   );
 
+                              final isHorizonLocked = !state.isNodeWithinHorizon(node);
+
                               return Positioned(
                                 left: pos.dx,
                                 top: pos.dy,
                                 width: _cardWidth,
                                 height: _cardHeight,
                                 child: Opacity(
-                                  opacity: isMatch ? 1.0 : 0.20,
+                                  opacity: isMatch
+                                      ? (isHorizonLocked ? 0.35 : 1.0)
+                                      : 0.20,
                                   child: GestureDetector(
-                                    onTap: () {
-                                      _showResearchDetailModal(
-                                        context,
-                                        node,
-                                        state,
-                                      );
-                                    },
+                                    onTap: isHorizonLocked
+                                        ? null
+                                        : () {
+                                            _showResearchDetailModal(
+                                              context,
+                                              node,
+                                              state,
+                                            );
+                                          },
                                     child: _ResearchNodeCard(
                                       node: node,
                                       isActiveFocus:
                                           state.activeResearchNodeId == node.id,
                                       isSearchMatch:
                                           _searchQuery.isNotEmpty && isMatch,
+                                      isHorizonLocked: isHorizonLocked,
                                     ),
                                   ),
                                 ),
@@ -682,6 +689,36 @@ class _RndLabPanelState extends State<RndLabPanel> {
                     ),
                   ),
                 ],
+                Builder(
+                  builder: (context) {
+                    final int currentYear = state.gameDate.year;
+                    if (currentYear < node.historicalYear && !isCompleted) {
+                      final int yearsAhead = node.historicalYear - currentYear;
+                      final double costMultiplier = 1.0 + 0.5 * yearsAhead * (1.0 - state.rndFunding.aotMitigation);
+                      final int percentIncrease = ((costMultiplier - 1.0) * 100).round();
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 12.0),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF78350F),
+                            border: Border.all(color: const Color(0xFFF59E0B), width: 1.0),
+                          ),
+                          child: Text(
+                            '[ ! ] AHEAD OF TIME WARNING ($yearsAhead YEAR DELTA): COMPLIANCE COSTS SCALED BY $percentIncrease%',
+                            style: const TextStyle(
+                              fontFamily: 'IBMPlexMono',
+                              color: Color(0xFFFBBF24),
+                              fontSize: 9.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  }
+                ),
                 const SizedBox(height: 16.0),
 
                 // Footer Buttons Bar
@@ -814,11 +851,13 @@ class _ResearchNodeCard extends StatefulWidget {
   final ResearchNode node;
   final bool isActiveFocus;
   final bool isSearchMatch;
+  final bool isHorizonLocked;
 
   const _ResearchNodeCard({
     required this.node,
     this.isActiveFocus = false,
     this.isSearchMatch = false,
+    this.isHorizonLocked = false,
   });
 
   @override
@@ -897,85 +936,121 @@ class _ResearchNodeCardState extends State<_ResearchNodeCard>
           ];
         }
 
-        return Container(
-          decoration: BoxDecoration(
-            color: isCompleted ? HTColors.surfaceVariant : HTColors.surface,
-            border: Border.all(color: borderColor, width: borderWidth),
-            borderRadius: BorderRadius.circular(4.0),
-            boxShadow: shadows,
-          ),
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    '${node.yearEra}',
-                    style: HTTypography.metricValue.copyWith(
-                      color: isCompleted ? branchColor : HTColors.textMuted,
-                      fontSize: 10.0,
+        final isHorizonLocked = widget.isHorizonLocked;
+
+        return Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: isCompleted ? HTColors.surfaceVariant : HTColors.surface,
+                border: Border.all(
+                  color: isHorizonLocked ? Colors.red.withValues(alpha: 0.3) : borderColor,
+                  width: borderWidth,
+                ),
+                borderRadius: BorderRadius.circular(4.0),
+                boxShadow: shadows,
+              ),
+              padding: const EdgeInsets.all(8.0),
+              child: Opacity(
+                opacity: isHorizonLocked ? 0.3 : 1.0,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          '${node.yearEra}',
+                          style: HTTypography.metricValue.copyWith(
+                            color: isCompleted ? branchColor : HTColors.textMuted,
+                            fontSize: 10.0,
+                          ),
+                        ),
+                        if (isActiveFocus) ...[
+                          const SizedBox(width: 6.0),
+                          const Text(
+                            '[FOCUS]',
+                            style: TextStyle(
+                              fontFamily: 'IBMPlexMono',
+                              color: HTColors.primary,
+                              fontSize: 8.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                        const Spacer(),
+                        if (node.isUnlocked && !isCompleted)
+                          const Icon(
+                            Icons.lock_open,
+                            size: 10,
+                            color: HTColors.textSecondary,
+                          )
+                        else if (!isCompleted)
+                          const Icon(Icons.lock, size: 10, color: HTColors.textMuted),
+                      ],
                     ),
-                  ),
-                  if (isActiveFocus) ...[
-                    const SizedBox(width: 6.0),
-                    const Text(
-                      '[FOCUS]',
-                      style: TextStyle(
-                        fontFamily: 'IBMPlexMono',
-                        color: HTColors.primary,
-                        fontSize: 8.0,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(height: 4.0),
+                    Text(
+                      node.title,
+                      style: HTTypography.listTitle.copyWith(
+                        color: (isCompleted || isActiveFocus)
+                            ? HTColors.textPrimary
+                            : HTColors.textSecondary,
+                        fontSize: 11.0,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2.0),
+                    Expanded(
+                      child: Text(
+                        node.description,
+                        style: HTTypography.listSubtitle.copyWith(fontSize: 9.0),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(height: 4.0),
+                    // Progress bar
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(2.0),
+                      child: LinearProgressIndicator(
+                        value: node.progress,
+                        minHeight: 4.0,
+                        backgroundColor: HTColors.background,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          isCompleted ? branchColor : HTColors.primary,
+                        ),
                       ),
                     ),
                   ],
-                  const Spacer(),
-                  if (node.isUnlocked && !isCompleted)
-                    const Icon(
-                      Icons.lock_open,
-                      size: 10,
-                      color: HTColors.textSecondary,
-                    )
-                  else if (!isCompleted)
-                    const Icon(Icons.lock, size: 10, color: HTColors.textMuted),
-                ],
-              ),
-              const SizedBox(height: 4.0),
-              Text(
-                node.title,
-                style: HTTypography.listTitle.copyWith(
-                  color: (isCompleted || isActiveFocus)
-                      ? HTColors.textPrimary
-                      : HTColors.textSecondary,
-                  fontSize: 11.0,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 2.0),
-              Expanded(
-                child: Text(
-                  node.description,
-                  style: HTTypography.listSubtitle.copyWith(fontSize: 9.0),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(height: 4.0),
-              // Progress bar
-              ClipRRect(
-                borderRadius: BorderRadius.circular(2.0),
-                child: LinearProgressIndicator(
-                  value: node.progress,
-                  minHeight: 4.0,
-                  backgroundColor: HTColors.background,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    isCompleted ? branchColor : HTColors.primary,
+            ),
+            if (isHorizonLocked)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  child: const Center(
+                    child: Text(
+                      '[ HORIZON LOCKED ]',
+                      style: TextStyle(
+                        fontFamily: 'IBMPlexMono',
+                        color: Color(0xFFEF4444),
+                        fontSize: 10.0,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black,
+                            blurRadius: 4.0,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ],
-          ),
+          ],
         );
       },
     );

@@ -11,6 +11,7 @@ import '../core/app_state.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import '../../versioning/versioning_aware.dart';
+import '../managers/audio_manager.dart';
 
 class MainMenuView extends StatelessWidget {
   final AppStateMachine appState;
@@ -60,7 +61,10 @@ class MainMenuView extends StatelessWidget {
                 _MenuButton(
                   label: 'BEGIN INITIALIZATION',
                   icon: Icons.power_settings_new,
-                  onTap: () => appState.goToSetup(),
+                  onTap: () {
+                    AudioManager.instance.playSFX('audio/sounds/click.wav');
+                    appState.goToSetup();
+                  },
                   isPrimary: true,
                 ),
                 const SizedBox(height: 16.0),
@@ -68,14 +72,30 @@ class MainMenuView extends StatelessWidget {
                 _MenuButton(
                   label: 'RESTORE SESSION',
                   icon: Icons.restore,
-                  onTap: () => appState.goToSessionSlots(),
+                  onTap: () {
+                    AudioManager.instance.playSFX('audio/sounds/click.wav');
+                    appState.goToSessionSlots();
+                  },
                 ),
                 const SizedBox(height: 16.0),
 
                 _MenuButton(
                   label: 'TERMINAL SETTINGS',
                   icon: Icons.settings,
-                  onTap: () => appState.goToSettings(),
+                  onTap: () {
+                    AudioManager.instance.playSFX('audio/sounds/click.wav');
+                    appState.goToSettings();
+                  },
+                ),
+                const SizedBox(height: 16.0),
+
+                _MenuButton(
+                  label: 'ABOUT SYSTEM',
+                  icon: Icons.info_outline,
+                  onTap: () {
+                    AudioManager.instance.playSFX('audio/sounds/click.wav');
+                    appState.goToAbout();
+                  },
                 ),
                 const SizedBox(height: 16.0),
 
@@ -83,6 +103,7 @@ class MainMenuView extends StatelessWidget {
                   label: 'EXIT CORE',
                   icon: Icons.exit_to_app,
                   onTap: () {
+                    AudioManager.instance.playSFX('audio/sounds/click.wav');
                     if (Platform.isAndroid) {
                       SystemNavigator.pop();
                     } else {

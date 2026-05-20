@@ -16,6 +16,7 @@ import '../../core/game_state_provider.dart';
 import '../../models/company_state.dart';
 import '../../core/app_state.dart';
 import '../../core/save_manager.dart';
+import '../../../versioning/versioning.dart';
 
 class GlobalTopMenuBar extends StatelessWidget {
   final AppStateMachine appState;
@@ -45,7 +46,7 @@ class GlobalTopMenuBar extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('HARDWARE TYCOON', style: HTTypography.panelHeader),
-              Text('v0.2.0 • Phase 4', style: HTTypography.bodySmall.copyWith(color: HTColors.textMuted)),
+              Text('${AppVersion.displayVersion} • Phase 4', style: HTTypography.bodySmall.copyWith(color: HTColors.textMuted)),
             ],
           ),
           

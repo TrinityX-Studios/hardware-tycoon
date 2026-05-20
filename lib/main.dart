@@ -9,6 +9,7 @@ import 'game/views/main_menu_view.dart';
 import 'game/views/setup_view.dart';
 import 'game/views/session_slots_view.dart';
 import 'game/views/settings_view.dart';
+import 'game/views/about_and_credits.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -75,6 +76,8 @@ class _HardwareTycoonAppState extends State<HardwareTycoonApp> {
         return SessionSlotsView(appState: _appState);
       case AppScreen.settings:
         return SettingsView(appState: _appState);
+      case AppScreen.about:
+        return AboutAndCreditsView(appState: _appState);
       case AppScreen.gameplay:
         // Wrap GameShell in the GameStateProvider for the active game session
         return GameStateProvider(

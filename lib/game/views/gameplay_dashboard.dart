@@ -16,6 +16,7 @@ import 'components/panels/rnd_lab_panel.dart';
 import 'components/panels/foundry_ops_panel.dart';
 import 'components/panels/design_init_panel.dart';
 import '../models/silicon_project.dart';
+import '../managers/audio_manager.dart';
 
 class GameplayDashboard extends StatefulWidget {
   final AppStateMachine appState;
@@ -349,6 +350,7 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
                               ),
                               onPressed: isValid
                                   ? () {
+                                      AudioManager.instance.playSFX('audio/sounds/success.wav');
                                       final proj = state.currentDesigningProject!;
                                       state.tapeoutProject(proj);
                                       setState(() {
@@ -366,7 +368,17 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
                                         ),
                                       );
                                     }
-                                  : null,
+                                  : () {
+                                      AudioManager.instance.playSFX('audio/sounds/error.wav');
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            '[PANIC] ADVISORY BLOCK: Resolve critical hardware verification failures before tapeout.',
+                                          ),
+                                          backgroundColor: HTColors.error,
+                                        ),
+                                      );
+                                    },
                             ),
                             const SizedBox(width: 8.0),
                             OutlinedButton.icon(

@@ -41,6 +41,7 @@ dependencies:
   font_awesome_flutter: ^11.0.0
   fl_chart: ^1.2.0
   window_manager: ^0.5.1
+  audioplayers: ^6.6.0
 
 dev_dependencies:
   flutter_test:
@@ -72,8 +73,9 @@ flutter:
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/to/asset-from-package
+  assets:
+    - assets/audio/music/
+    - assets/audio/sounds/
 
   fonts:
     - family: IBMPlexMono

@@ -13,6 +13,7 @@ enum AppScreen {
   gameplay,
   sessionSlots,
   settings,
+  about,
 }
 
 class AppStateMachine extends ChangeNotifier {
@@ -41,6 +42,11 @@ class AppStateMachine extends ChangeNotifier {
 
   void goToSettings() {
     _currentScreen = AppScreen.settings;
+    notifyListeners();
+  }
+
+  void goToAbout() {
+    _currentScreen = AppScreen.about;
     notifyListeners();
   }
 

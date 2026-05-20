@@ -6,6 +6,7 @@ import '../../../core/game_state.dart';
 import '../../../models/silicon_project.dart';
 import '../../../models/research_node.dart';
 import '../../../models/company_state.dart';
+import '../../../managers/audio_manager.dart';
 
 class DesignInitPanel extends StatefulWidget {
   final VoidCallback onClose;
@@ -434,7 +435,10 @@ class _DesignInitPanelState extends State<DesignInitPanel> {
                   // NEXT STEP
                   if (_currentStep < _totalSteps - 1)
                     ElevatedButton(
-                      onPressed: nextDisabled ? null : () => setState(() => _currentStep++),
+                      onPressed: nextDisabled ? null : () {
+                        AudioManager.instance.playSFX('audio/sounds/click.wav');
+                        setState(() => _currentStep++);
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: HTColors.primary,
                         foregroundColor: HTColors.textOnPrimary,

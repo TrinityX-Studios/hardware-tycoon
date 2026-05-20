@@ -634,19 +634,34 @@ class GameStateNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  void selectResearchNode(String id) {
-    if (_automationPolicy == AutomationPolicy.fullyAutomated) return;
-    final node = HistoricalTechTree.nodes.firstWhere((n) => n.id == id);
-    if (node.progress >= 1.0) return;
+  bool isNodeWithinHorizon(ResearchNode node) {
+    int maxAllowedYear = currentGameYear + 3;
+    return node.historicalYear <= maxAllowedYear;
+  }
+
+  bool canSelectResearchNode(String nodeId) {
+    final node = HistoricalTechTree.nodes.firstWhere((n) => n.id == nodeId);
+    if (node.progress >= 1.0) return false;
 
     final prereqsMet = node.prerequisiteIds.every((pid) {
       final pre = HistoricalTechTree.nodes.firstWhere((n) => n.id == pid);
       return pre.progress >= 1.0;
     });
-    if (!prereqsMet) return;
+    if (!prereqsMet) return false;
 
-    _activeResearchNodeId = id;
+    return isNodeWithinHorizon(node);
+  }
+
+  bool startResearch(String nodeId) {
+    if (!canSelectResearchNode(nodeId)) return false;
+    _activeResearchNodeId = nodeId;
     notifyListeners();
+    return true;
+  }
+
+  void selectResearchNode(String id) {
+    if (_automationPolicy == AutomationPolicy.fullyAutomated) return;
+    startResearch(id);
   }
 
   void _autoSelectResearch() {
@@ -657,7 +672,7 @@ class GameStateNotifier extends ChangeNotifier {
           final pNode = HistoricalTechTree.nodes.firstWhere((x) => x.id == pid);
           return pNode.progress >= 1.0;
         });
-        return !isCompleted && prereqsMet;
+        return !isCompleted && prereqsMet && isNodeWithinHorizon(n);
       });
       _activeResearchNodeId = next.id;
     } catch (_) {
