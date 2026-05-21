@@ -1,8 +1,5 @@
 # Hardware Tycoon
 
-<iframe frameborder="0" src="https://itch.io/embed/3751017?linkback=true&amp;border_width=3" width="556" height="171"><a href="https://xynoxx.itch.io/hwtycoon">Hardware Tycoon by Mizu</a></iframe>
-
-
 A new Flutter project.
 
 ## Getting Started
