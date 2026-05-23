@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../core/theme.dart';
@@ -16,6 +17,14 @@ class _MusicDeckPanelState extends State<MusicDeckPanel>
   late final AnimationController _eqController;
   final List<double> _barHeights = List.filled(8, 3.0);
   final math.Random _rand = math.Random();
+
+  // Playback position and duration state
+  Duration _position = Duration.zero;
+  Duration _duration = Duration.zero;
+  StreamSubscription<Duration>? _positionSubscription;
+  StreamSubscription<Duration>? _durationSubscription;
+  bool _isDragging = false;
+  double _dragValue = 0.0;
 
   static const List<Map<String, String>> _tracks = [
     {
@@ -44,6 +53,39 @@ class _MusicDeckPanelState extends State<MusicDeckPanel>
       duration: const Duration(milliseconds: 200),
     )..addListener(_updateEqBars);
     _eqController.repeat();
+
+    // Fetch initial playback duration & position if track is already loaded
+    AudioManager.instance.getCurrentPosition().then((p) {
+      if (mounted && p != null) {
+        setState(() {
+          _position = p;
+        });
+      }
+    });
+    AudioManager.instance.getDuration().then((d) {
+      if (mounted && d != null) {
+        setState(() {
+          _duration = d;
+        });
+      }
+    });
+
+    // Subscribe to BGM position/duration streams
+    _positionSubscription = AudioManager.instance.onPositionChanged.listen((p) {
+      if (mounted && !_isDragging) {
+        setState(() {
+          _position = p;
+        });
+      }
+    });
+
+    _durationSubscription = AudioManager.instance.onDurationChanged.listen((d) {
+      if (mounted) {
+        setState(() {
+          _duration = d;
+        });
+      }
+    });
   }
 
   void _updateEqBars() {
@@ -61,8 +103,16 @@ class _MusicDeckPanelState extends State<MusicDeckPanel>
     });
   }
 
+  String _formatDuration(Duration d) {
+    final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final seconds = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
+  }
+
   @override
   void dispose() {
+    _positionSubscription?.cancel();
+    _durationSubscription?.cancel();
     _eqController.dispose();
     super.dispose();
   }
@@ -153,7 +203,72 @@ class _MusicDeckPanelState extends State<MusicDeckPanel>
             ),
           ),
 
-          const SizedBox(height: 12.0),
+          const SizedBox(height: 8.0),
+
+          // Progress Bar with Time stamps
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _formatDuration(_position),
+                    style: const TextStyle(
+                      fontFamily: 'IBMPlexMono',
+                      fontSize: 8.0,
+                      fontWeight: FontWeight.bold,
+                      color: HTColors.primary,
+                    ),
+                  ),
+                  Text(
+                    _formatDuration(_duration),
+                    style: const TextStyle(
+                      fontFamily: 'IBMPlexMono',
+                      fontSize: 8.0,
+                      color: HTColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 2.0),
+              SliderTheme(
+                data: SliderTheme.of(context).copyWith(
+                  activeTrackColor: HTColors.primary,
+                  inactiveTrackColor: HTColors.surfaceVariant,
+                  thumbColor: HTColors.primary,
+                  overlayColor: HTColors.primary.withValues(alpha: 0.2),
+                  trackHeight: 2.0,
+                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 5.0),
+                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 10.0),
+                ),
+                child: SizedBox(
+                  height: 14.0,
+                  child: Slider(
+                    value: (_isDragging ? _dragValue : _position.inMilliseconds.toDouble())
+                        .clamp(0.0, _duration.inMilliseconds.toDouble() > 0 ? _duration.inMilliseconds.toDouble() : 1.0),
+                    min: 0.0,
+                    max: _duration.inMilliseconds.toDouble() > 0 ? _duration.inMilliseconds.toDouble() : 1.0,
+                    onChanged: (val) {
+                      setState(() {
+                        _isDragging = true;
+                        _dragValue = val;
+                      });
+                    },
+                    onChangeEnd: (val) async {
+                      await AudioManager.instance.seekBGM(Duration(milliseconds: val.toInt()));
+                      setState(() {
+                        _isDragging = false;
+                        _position = Duration(milliseconds: val.toInt());
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 8.0),
 
           // Player Controls
           Row(

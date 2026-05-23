@@ -54,6 +54,19 @@ class AudioManager {
   bool get isUserOverridden => _isUserOverridden;
   List<String> get playlist => _playlist;
 
+  // Position, duration streams and seek controls
+  Stream<Duration> get onPositionChanged => _bgmPlayer.onPositionChanged;
+  Stream<Duration> get onDurationChanged => _bgmPlayer.onDurationChanged;
+  Future<void> seekBGM(Duration position) async {
+    try {
+      await _bgmPlayer.seek(position);
+    } catch (e) {
+      debugPrint('HT AudioManager seekBGM Error: $e');
+    }
+  }
+  Future<Duration?> getCurrentPosition() => _bgmPlayer.getCurrentPosition();
+  Future<Duration?> getDuration() => _bgmPlayer.getDuration();
+
   Future<void> pauseBGM() async {
     try {
       await _bgmPlayer.pause();

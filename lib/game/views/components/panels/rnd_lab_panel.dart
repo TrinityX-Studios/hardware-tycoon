@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/theme.dart';
 
@@ -282,55 +283,61 @@ class _RndLabPanelState extends State<RndLabPanel> {
                   );
                 }).toList(),
               ),
-              const Spacer(),
-              if (state.activeResearchNodeId != null) ...[
-                Builder(
-                  builder: (context) {
-                    final node = HistoricalTechTree.nodes.firstWhere(
-                      (n) => n.id == state.activeResearchNodeId,
-                    );
-                    final researchStaff = state.employees
-                        .where(
-                          (e) =>
-                              e.assignment == WorkAssignment.rnd &&
-                              (e.type == EmployeeType.architect ||
-                                  e.type == EmployeeType.driverDev),
+              const SizedBox(width: 16.0),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: state.activeResearchNodeId != null
+                      ? Builder(
+                          builder: (context) {
+                            final node = HistoricalTechTree.nodes.firstWhere(
+                              (n) => n.id == state.activeResearchNodeId,
+                            );
+                            final researchStaff = state.employees
+                                .where(
+                                  (e) =>
+                                      e.assignment == WorkAssignment.rnd &&
+                                      (e.type == EmployeeType.architect ||
+                                          e.type == EmployeeType.driverDev),
+                                )
+                                .length;
+                            final int currentYear = state.gameDate.year;
+                            double costMultiplier = 1.0;
+                            if (currentYear < node.historicalYear) {
+                              final int yearsAhead = node.historicalYear - currentYear;
+                              costMultiplier += 0.5 * yearsAhead * (1.0 - state.rndFunding.aotMitigation);
+                            }
+                            final double effectiveCostTicks = node.researchCostTicks * costMultiplier;
+                            final speed =
+                                (0.5 + 0.5 * researchStaff) /
+                                (effectiveCostTicks * 10.0);
+                            final ticksRemaining = speed > 0
+                                ? ((1.0 - node.progress) / speed).round()
+                                : 9999;
+                            final textContent = 'ACTIVE FOCUS: "${node.title.toUpperCase()}" [$ticksRemaining TICKS EST]';
+                            return _MarqueeText(
+                              key: ValueKey(node.id + ticksRemaining.toString()),
+                              text: textContent,
+                              style: const TextStyle(
+                                fontFamily: 'IBMPlexMono',
+                                color: HTColors.primary,
+                                fontSize: 9.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          },
                         )
-                        .length;
-                    final int currentYear = state.gameDate.year;
-                    double costMultiplier = 1.0;
-                    if (currentYear < node.historicalYear) {
-                      final int yearsAhead = node.historicalYear - currentYear;
-                      costMultiplier += 0.5 * yearsAhead * (1.0 - state.rndFunding.aotMitigation);
-                    }
-                    final double effectiveCostTicks = node.researchCostTicks * costMultiplier;
-                    final speed =
-                        (0.5 + 0.5 * researchStaff) /
-                        (effectiveCostTicks * 10.0);
-                    final ticksRemaining = speed > 0
-                        ? ((1.0 - node.progress) / speed).round()
-                        : 9999;
-                    return Text(
-                      'ACTIVE FOCUS: "${node.title.toUpperCase()}" [$ticksRemaining TICKS EST]',
-                      style: const TextStyle(
-                        fontFamily: 'IBMPlexMono',
-                        color: HTColors.primary,
-                        fontSize: 9.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    );
-                  },
+                      : const _MarqueeText(
+                          key: ValueKey('none_idle'),
+                          text: 'ACTIVE FOCUS: NONE [IDLE]',
+                          style: TextStyle(
+                            fontFamily: 'IBMPlexMono',
+                            color: HTColors.textMuted,
+                            fontSize: 9.0,
+                          ),
+                        ),
                 ),
-              ] else ...[
-                const Text(
-                  'ACTIVE FOCUS: NONE [IDLE]',
-                  style: TextStyle(
-                    fontFamily: 'IBMPlexMono',
-                    color: HTColors.textMuted,
-                    fontSize: 9.0,
-                  ),
-                ),
-              ],
+              ),
             ],
           ),
         ),
@@ -1240,4 +1247,94 @@ class _EraBackgroundPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _EraBackgroundPainter oldDelegate) => false;
+}
+
+class _MarqueeText extends StatefulWidget {
+  final String text;
+  final TextStyle style;
+
+  const _MarqueeText({
+    super.key,
+    required this.text,
+    required this.style,
+  });
+
+  @override
+  State<_MarqueeText> createState() => _MarqueeTextState();
+}
+
+class _MarqueeTextState extends State<_MarqueeText> {
+  late final ScrollController _scrollController;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startScrolling());
+  }
+
+  void _startScrolling() {
+    _scheduleNextScroll(const Duration(seconds: 2));
+  }
+
+  void _scheduleNextScroll(Duration delay) {
+    if (!mounted) return;
+    _timer?.cancel();
+    _timer = Timer(delay, () async {
+      if (!mounted) return;
+      if (!_scrollController.hasClients) {
+        _scheduleNextScroll(const Duration(seconds: 1));
+        return;
+      }
+      final maxExtent = _scrollController.position.maxScrollExtent;
+      if (maxExtent > 0) {
+        try {
+          await _scrollController.animateTo(
+            maxExtent,
+            duration: Duration(milliseconds: maxExtent.toInt() * 45),
+            curve: Curves.linear,
+          );
+          if (!mounted) return;
+          _timer = Timer(const Duration(seconds: 2), () async {
+            if (!mounted) return;
+            try {
+              await _scrollController.animateTo(
+                0.0,
+                duration: const Duration(seconds: 1),
+                curve: Curves.easeOut,
+              );
+              _scheduleNextScroll(const Duration(seconds: 2));
+            } catch (_) {
+              if (mounted) _scheduleNextScroll(const Duration(seconds: 2));
+            }
+          });
+        } catch (_) {
+          if (mounted) _scheduleNextScroll(const Duration(seconds: 2));
+        }
+      } else {
+        _scheduleNextScroll(const Duration(seconds: 1));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      controller: _scrollController,
+      scrollDirection: Axis.horizontal,
+      child: Text(
+        widget.text,
+        style: widget.style,
+        maxLines: 1,
+      ),
+    );
+  }
 }
