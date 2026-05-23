@@ -575,6 +575,10 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
                 ),
               ),
             ),
+          if (state.pendingBankruptcyWarning)
+            _BankruptcyWarningOverlay(state: state),
+          if (state.isOutOfBusiness)
+            _OutOfBusinessOverlay(state: state, appState: widget.appState),
         ],
       ),
     );
@@ -1228,4 +1232,369 @@ class _TerminalGridPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _BankruptcyWarningOverlay extends StatefulWidget {
+  final GameStateNotifier state;
+  const _BankruptcyWarningOverlay({required this.state});
+
+  @override
+  State<_BankruptcyWarningOverlay> createState() => _BankruptcyWarningOverlayState();
+}
+
+class _BankruptcyWarningOverlayState extends State<_BankruptcyWarningOverlay> {
+  bool _isCollapsed = true;
+
+  @override
+  Widget build(BuildContext context) {
+    final breakdown = widget.state.getDailyCostBreakdown();
+    final double totalDailyCost = breakdown.values.fold(0.0, (sum, val) => sum + val);
+
+    return Positioned.fill(
+      child: Container(
+        color: Colors.black.withValues(alpha: 0.85),
+        child: Center(
+          child: Container(
+            width: 480.0,
+            decoration: BoxDecoration(
+              color: HTColors.surface,
+              border: Border.all(color: HTColors.warning, width: 2.0),
+              boxShadow: [
+                BoxShadow(
+                  color: HTColors.warning.withValues(alpha: 0.2),
+                  blurRadius: 20.0,
+                  spreadRadius: 4.0,
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.warning_amber_rounded, color: HTColors.warning, size: 24.0),
+                    const SizedBox(width: 12.0),
+                    Text(
+                      'BANKRUPTCY WARNING',
+                      style: HTTypography.panelHeader.copyWith(color: HTColors.warning),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12.0),
+                const Divider(color: HTColors.border, height: 1.0),
+                const SizedBox(height: 16.0),
+                
+                Text(
+                  'YOUR LIQUIDITY HAS FALLEN CRITICALLY LOW: ${_formatCurrency(widget.state.liquidity)}',
+                  style: const TextStyle(
+                    fontFamily: 'IBMPlexMono',
+                    color: HTColors.textPrimary,
+                    fontSize: 11.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8.0),
+                const Text(
+                  'BANKRUPTCY IS IMMINENT. YOU NEED TO RECONSIDER YOUR BUDGET SPENDING HABITS IMMEDIATELY OR THE ENTERPRISE WILL BE OUT OF BUSINESS.',
+                  style: TextStyle(
+                    fontFamily: 'IBMPlexMono',
+                    color: HTColors.textSecondary,
+                    fontSize: 10.0,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+
+                InkWell(
+                  onTap: () {
+                    setState(() {
+                      _isCollapsed = !_isCollapsed;
+                    });
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: HTColors.surfaceVariant,
+                      border: Border.all(color: HTColors.border),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              _isCollapsed ? Icons.chevron_right : Icons.keyboard_arrow_down,
+                              color: HTColors.warning,
+                              size: 16.0,
+                            ),
+                            const SizedBox(width: 8.0),
+                            const Text(
+                              'FINANCIAL DRAIN BREAKDOWN',
+                              style: TextStyle(
+                                fontFamily: 'IBMPlexMono',
+                                color: HTColors.textPrimary,
+                                fontSize: 9.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          'TOTAL: -${_formatCurrency(totalDailyCost)}/DAY',
+                          style: const TextStyle(
+                            fontFamily: 'IBMPlexMono',
+                            color: HTColors.error,
+                            fontSize: 9.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                if (!_isCollapsed) ...[
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: HTColors.background,
+                      border: Border(
+                        left: BorderSide(color: HTColors.border),
+                        right: BorderSide(color: HTColors.border),
+                        bottom: BorderSide(color: HTColors.border),
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildBreakdownRow('BASE OPERATIONS', breakdown['base_facilities']!),
+                        _buildBreakdownRow('R&D STAFF SALARIES', breakdown['rnd_staff']!),
+                        _buildBreakdownRow('R&D OVERHEAD', breakdown['rnd_overhead']!),
+                        _buildBreakdownRow('WORKFORCE UPKEEP', breakdown['ops_staff']!),
+                        _buildBreakdownRow('COMPILER/VLIW LICENSES', breakdown['compiler']!),
+                      ],
+                    ),
+                  ),
+                ],
+
+                const SizedBox(height: 24.0),
+
+                ElevatedButton(
+                  onPressed: () {
+                    widget.state.clearBankruptcyWarning();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF78350F), // Amber 900
+                    foregroundColor: HTColors.textPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 14.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(2.0),
+                      side: const BorderSide(color: HTColors.warning, width: 1.0),
+                    ),
+                  ),
+                  child: const Text(
+                    'ACKNOWLEDGE & RECONSIDER BUDGET',
+                    style: TextStyle(
+                      fontFamily: 'IBMPlexMono',
+                      fontSize: 10.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBreakdownRow(String label, double value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontFamily: 'IBMPlexMono',
+              color: HTColors.textSecondary,
+              fontSize: 9.0,
+            ),
+          ),
+          Text(
+            '-${_formatCurrency(value)}/day',
+            style: TextStyle(
+              fontFamily: 'IBMPlexMono',
+              color: value > 0.0 ? HTColors.error : HTColors.textMuted,
+              fontSize: 9.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatCurrency(double val) {
+    if (val < 0) {
+      return '-\$${val.abs().toStringAsFixed(2)}';
+    }
+    return '\$${val.toStringAsFixed(2)}';
+  }
+}
+
+class _OutOfBusinessOverlay extends StatelessWidget {
+  final GameStateNotifier state;
+  final AppStateMachine appState;
+  const _OutOfBusinessOverlay({required this.state, required this.appState});
+
+  @override
+  Widget build(BuildContext context) {
+    final breakdown = state.getDailyCostBreakdown();
+    final double totalDailyCost = breakdown.values.fold(0.0, (sum, val) => sum + val);
+
+    return Positioned.fill(
+      child: Container(
+        color: Colors.black.withValues(alpha: 0.95),
+        child: Center(
+          child: Container(
+            width: 500.0,
+            decoration: BoxDecoration(
+              color: HTColors.surface,
+              border: Border.all(color: HTColors.error, width: 2.0),
+              boxShadow: [
+                BoxShadow(
+                  color: HTColors.error.withValues(alpha: 0.25),
+                  blurRadius: 30.0,
+                  spreadRadius: 6.0,
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.dangerous, color: HTColors.error, size: 28.0),
+                    const SizedBox(width: 12.0),
+                    Text(
+                      'SYSTEM PANIC: INSOLVENCY DETECTED',
+                      style: HTTypography.panelHeader.copyWith(
+                        color: HTColors.error,
+                        fontSize: 14.0,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                const Divider(color: HTColors.border, height: 1.0),
+                const SizedBox(height: 20.0),
+
+                const Text(
+                  'GAME OVER',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'IBMPlexMono',
+                    color: HTColors.error,
+                    fontSize: 22.0,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2.0,
+                  ),
+                ),
+                const SizedBox(height: 8.0),
+                const Text(
+                  'THE BOARD OF DIRECTORS HAS DECLARED BANKRUPTCY. YOUR OPERATIONS ARE CEASED, ALL TRADING SUSPENDED, AND THE CORE SILICON COMPLIANCE LABORATORY HAS BEEN SHUT DOWN PERMANENTLY.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'IBMPlexMono',
+                    color: HTColors.textSecondary,
+                    fontSize: 10.0,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 20.0),
+
+                Container(
+                  color: HTColors.background,
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      _buildStatRow('FINAL LIQUIDITY', _formatCurrency(state.liquidity), color: HTColors.error),
+                      const SizedBox(height: 6.0),
+                      _buildStatRow('FINAL VALUATION', _formatCurrency(state.stockValuation)),
+                      const SizedBox(height: 6.0),
+                      _buildStatRow('DAILY REVENUE RUN RATE', _formatCurrency(1400.0 + (state.totalGameDays * 2.5))),
+                      const SizedBox(height: 6.0),
+                      _buildStatRow('DAILY EXPENSE DRAIN', _formatCurrency(totalDailyCost), color: HTColors.error),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24.0),
+
+                ElevatedButton(
+                  onPressed: () {
+                    appState.goToMainMenu();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF7F1D1D), // Red 900
+                    foregroundColor: HTColors.textPrimary,
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(2.0),
+                      side: const BorderSide(color: HTColors.error, width: 1.0),
+                    ),
+                  ),
+                  child: const Text(
+                    'SHUTDOWN SIMULATION & RETURN TO MAIN MENU',
+                    style: TextStyle(
+                      fontFamily: 'IBMPlexMono',
+                      fontSize: 10.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatRow(String label, String value, {Color? color}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontFamily: 'IBMPlexMono',
+            color: HTColors.textSecondary,
+            fontSize: 9.0,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontFamily: 'IBMPlexMono',
+            color: color ?? HTColors.textPrimary,
+            fontSize: 9.5,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatCurrency(double val) {
+    if (val < 0) {
+      return '-\$${val.abs().toStringAsFixed(2)}';
+    }
+    return '\$${val.toStringAsFixed(2)}';
+  }
 }

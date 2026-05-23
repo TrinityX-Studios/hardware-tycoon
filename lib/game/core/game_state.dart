@@ -144,6 +144,44 @@ class GameStateNotifier extends ChangeNotifier {
   bool _isDesigningArchitecture = false;
   bool get isDesigningArchitecture => _isDesigningArchitecture;
 
+  // -- Bankruptcy & Business Scaffolding --
+  bool _hasWarnedBankruptcy = false;
+  bool get hasWarnedBankruptcy => _hasWarnedBankruptcy;
+
+  bool _pendingBankruptcyWarning = false;
+  bool get pendingBankruptcyWarning => _pendingBankruptcyWarning;
+
+  bool _isOutOfBusiness = false;
+  bool get isOutOfBusiness => _isOutOfBusiness;
+
+  void clearBankruptcyWarning() {
+    _pendingBankruptcyWarning = false;
+    notifyListeners();
+  }
+
+  Map<String, double> getDailyCostBreakdown() {
+    final rndStaffCount = _employees.where((e) => e.assignment == WorkAssignment.rnd).length;
+    final otherStaffCount = totalStaff - rndStaffCount;
+    final rndStaffCost = rndStaffCount * 45.0 * _rndFunding.upkeepMult;
+    final otherStaffCost = otherStaffCount * 45.0;
+    final rndLabOverhead = 200.0 * (_rndFunding.upkeepMult - 1.0);
+    
+    double compilerExpenses = 0.0;
+    for (final arch in _savedArchitectures) {
+      if (arch.enabledExtensions['vliw_layout'] == true) {
+        compilerExpenses += 50.0;
+      }
+    }
+    
+    return {
+      'base_facilities': _config.baseOperatingCost,
+      'rnd_staff': rndStaffCost,
+      'rnd_overhead': rndLabOverhead,
+      'ops_staff': otherStaffCost,
+      'compiler': compilerExpenses,
+    };
+  }
+
   SiliconProject? _currentDesigningProject;
   SiliconProject? get currentDesigningProject => _currentDesigningProject;
 
@@ -302,6 +340,9 @@ class GameStateNotifier extends ChangeNotifier {
     _liquidity = _config.startingLiquidity;
     _netCashflow = _config.startingCashflow;
     _stockValuation = _config.startingStockValuation;
+    _hasWarnedBankruptcy = false;
+    _pendingBankruptcyWarning = false;
+    _isOutOfBusiness = false;
 
     // Seed initial research goals
     _activeResearch.addAll([
@@ -450,6 +491,19 @@ class GameStateNotifier extends ChangeNotifier {
     _netCashflow = dailyRevenue - dailyCost;
     _liquidity += _netCashflow;
 
+    // Bankruptcy and Out of Business Gating Checks
+    if (_liquidity <= -500000.0) {
+      _isOutOfBusiness = true;
+      pause();
+    } else if (_liquidity <= -250000.0 && !_hasWarnedBankruptcy) {
+      _hasWarnedBankruptcy = true;
+      _pendingBankruptcyWarning = true;
+      pause();
+    } else if (_liquidity >= -250000.0) {
+      _hasWarnedBankruptcy = false;
+      _pendingBankruptcyWarning = false;
+    }
+
     // Stock price drift
     if (_isPublic) {
       _stockValuation += (_netCashflow > 0 ? 0.03 : -0.05);
@@ -484,6 +538,8 @@ class GameStateNotifier extends ChangeNotifier {
   }
 
   void _updateSubTick() {
+    final double researchSlowdownMultiplier = _liquidity < 0.0 ? 0.25 : 1.0;
+
     // Smooth research progress advancement
     for (final goal in _activeResearch) {
       if (goal.progress < 1.0) {
@@ -494,7 +550,7 @@ class GameStateNotifier extends ChangeNotifier {
                     e.type == EmployeeType.driverDev))
             .length;
         goal.progress = (goal.progress +
-                0.00005 * researchStaff)
+                0.00005 * researchStaff * researchSlowdownMultiplier)
             .clamp(0.0, 1.0);
       }
     }
@@ -518,7 +574,7 @@ class GameStateNotifier extends ChangeNotifier {
           }
           final double effectiveCostTicks = node.researchCostTicks * penaltyFactor;
           
-          final speed = (0.5 + 0.5 * researchStaff) / (effectiveCostTicks * 10.0);
+          final speed = (0.5 + 0.5 * researchStaff) / (effectiveCostTicks * 10.0) * researchSlowdownMultiplier;
           node.progress = (node.progress + speed).clamp(0.0, 1.0);
           if (node.progress >= 1.0) {
             // Node completed! Unlock downstream nodes!

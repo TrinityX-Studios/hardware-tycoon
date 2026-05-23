@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:window_manager/window_manager.dart';
@@ -64,14 +65,13 @@ class _HardwareTycoonAppState extends State<HardwareTycoonApp> with WindowListen
     if (navigatorContext == null) {
       // Fallback close if context is not ready yet
       await AudioManager.instance.stopBGM();
-      await windowManager.destroy();
-      return;
+      exit(0);
     }
     final bool? shouldClose = await _showExitConfirmationDialog(navigatorContext);
     if (shouldClose == true) {
       // Graceful shutdown of audio layers to avoid Linux segmentation faults
       await AudioManager.instance.stopBGM();
-      await windowManager.destroy();
+      exit(0);
     }
   }
 
