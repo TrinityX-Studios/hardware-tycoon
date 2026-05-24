@@ -344,7 +344,7 @@ class _GameplayDashboardState extends State<GameplayDashboard> {
           ),
 
           // Pinned Design Mode Overlay (renders when player clicks design architecture)
-          if (state.isDesigningArchitecture)
+          if (state.isDesigningArchitecture && state.currentDesigningProject?.scope == DesignScope.architecture)
             Positioned.fill(
               top: 42.0,
               child: Container(

@@ -121,6 +121,18 @@ enum ExtDramCapacity {
   final String? requiredTechId;
 }
 
+class BinningTierSpec {
+  final double? clockOverrideMhz;
+  final double? voltageOverrideV;
+  final double? yieldOverridePct;
+
+  const BinningTierSpec({
+    this.clockOverrideMhz,
+    this.voltageOverrideV,
+    this.yieldOverridePct,
+  });
+}
+
 class CustomDieLayout {
   final String name;
   final List<PlacedComponent> components;
@@ -162,6 +174,7 @@ class SiliconProject {
   final Map<String, bool> enabledExtensions;
   final CacheAllocation cacheAllocation;
   final ExtDramCapacity maxExtDramCapacity;
+  final Map<String, BinningTierSpec>? marketSegments;
 
   bool get hasFpu => enabledExtensions['fpu'] ?? false;
   bool get getHasFpu => hasFpu;
@@ -198,6 +211,7 @@ class SiliconProject {
     Map<String, bool>? enabledExtensions,
     this.cacheAllocation = CacheAllocation.none,
     this.maxExtDramCapacity = ExtDramCapacity.none,
+    this.marketSegments,
   }) : enabledExtensions = enabledExtensions ?? {
           'fpu': hasFpu,
           'mmx': hasMmx,

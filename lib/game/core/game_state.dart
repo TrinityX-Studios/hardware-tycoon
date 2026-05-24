@@ -274,9 +274,7 @@ class GameStateNotifier extends ChangeNotifier {
   }
 
   void startDesigningProject(SiliconProject project) {
-    _currentDesigningProject = project;
-    _isDesigningArchitecture = true;
-    notifyListeners();
+    tapeoutProject(project);
   }
 
   void cancelDesigningProject() {
@@ -309,6 +307,7 @@ class GameStateNotifier extends ChangeNotifier {
       enabledExtensions: Map<String, bool>.from(project.enabledExtensions),
       cacheAllocation: project.cacheAllocation,
       maxExtDramCapacity: project.maxExtDramCapacity,
+      marketSegments: project.marketSegments == null ? null : Map<String, BinningTierSpec>.from(project.marketSegments!),
     );
 
     if (updated.scope == DesignScope.architecture) {
